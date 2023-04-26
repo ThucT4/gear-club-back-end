@@ -69,5 +69,5 @@ public class Product extends AbstractEntity {
     // Array list of features
     @Size(min = 2, max = 20)
     @Column(name = "FEATURES")
-    private HashMap<String, ArrayList<String>> features;
+    private HashMap<String, String> features;
 }
