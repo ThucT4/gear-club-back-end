@@ -1,12 +1,27 @@
 package com.pw.service;
+
+import java.util.List;
+
+public class CrudService<T> {
  
-public interface CrudService<T> {
+    T create(T t) {
+        return t;
+    }
  
-    T create(T t);
+    T retrieve(int id) {
+        return null;
+    }
  
-    T retrieve(int id);
+    T update(T t) {
+        return null;
+    }
  
-    T update(T t);
- 
-    void delete(int id);
+    void delete(int id) {
+
+    }
+
+    List<T> findAll() {
+        return null;
+    }
+
 }

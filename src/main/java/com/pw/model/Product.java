@@ -22,12 +22,12 @@ import java.util.HashMap;
 public class Product extends AbstractEntity {
     // Name of product
     @NotBlank
-    @Size(max = 50)
+    @Size(max = 75)
     @Column(name = "NAME")
     private String name;
 
     // Array list of images
-    @Size(min = 1, max = 10)
+    @Size(min = 1, max = 14)
     @Column(name = "IMAGES", length = 1024)
     private ArrayList<String> images;
  
@@ -67,7 +67,7 @@ public class Product extends AbstractEntity {
     private String intro;
 
     // Array list of features
-    @Size(min = 2, max = 20)
+    @Size(max = 20)
     @Column(name = "FEATURES")
     private HashMap<String, String> features;
 }
