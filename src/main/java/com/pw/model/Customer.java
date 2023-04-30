@@ -5,10 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
@@ -46,6 +43,4 @@ public class Customer extends AbstractEntity {
     @Size(max = 1024)
     @Column(name = "ADDRESS")
     private String shippingAddress;
-
-    private int cart_id;
 }
