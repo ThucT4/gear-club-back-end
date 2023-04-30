@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import org.jsoup.*;
 import org.jsoup.nodes.*;
@@ -29,6 +30,8 @@ import com.opencsv.CSVWriter;
 import com.pw.model.Product;
 import com.pw.repository.ProductRepository;
 
+import com.pw.fetchdata;
+
 @SpringBootApplication
 public class GearClubApplication implements CommandLineRunner {
 	private static final Logger log = LoggerFactory.getLogger(GearClubApplication.class);
@@ -37,22 +40,91 @@ public class GearClubApplication implements CommandLineRunner {
     private ProductRepository productRepository;
 
 	public static void main(String[] args) throws IOException {
+		// fetchdata.fetchData();
+		// fixData();
 		SpringApplication.run(GearClubApplication.class, args);
 	}
 
 	@Override
   	public void run(String... args) {
 		log.info("StartApplication...");
+		// System.out.println(Integer.parseInt(""));
+		
 		
 		// Run the following 2 lines ONCE to initialize the table data
 		// file2Db();
+		// log.info("Successfully initialize table Products");
+	}
 
-		// log.info("Successfully initialize P=table Products");
+	public static void fixData() {
+		try {
+			File inFile = new File("products.csv");
+			FileReader input = new FileReader(inFile);
+			CSVReader reader = new CSVReader(input);
+
+			File outFile = new File("products2.csv");
+			FileWriter output = new FileWriter(outFile, true);
+			CSVWriter writer = new CSVWriter(output);
+
+			String[] row;
+
+			while ( (row = reader.readNext()) != null) {
+				ArrayList<String> product = new ArrayList<String>();
+
+				for (int i = 0; i < row.length; i++) {
+					String cell = row[i];
+
+					if (i == 1) {
+						String[] redunt = {"nhà sản xuất:", "hãng sản xuất:", "thương hiệu:", "nhà sản xuất :", "·"};
+
+						cell = cell.toLowerCase();
+
+						for (String s : redunt) {
+							cell = cell.replaceAll(s, "");
+						}
+					}
+
+					else if (i == 2) {
+						cell = cell.replaceAll(",", "");
+						cell = cell.replaceAll("₫", "");
+					}
+					
+					else if (i == 3) {
+						String[] redunt = {"bảo hành", ":", " tháng", "·", "[^\\d]", " ́"};
+
+						cell = cell.toLowerCase();
+
+						for (String s : redunt) {
+							cell = cell.replaceAll(s, "");
+						}
+						
+						if (cell.contains(" tháng")) {
+							System.out.println(cell);
+						}
+					}
+
+					product.add(cell.trim());
+
+            	}
+				String[] data = product.toArray(new String[0]);
+
+				writer.writeNext(data);
+				
+			}
+
+			reader.close();
+			writer.close();
+
+		}
+		catch (IOException event) {
+			event.printStackTrace();
+			log.info(event.toString());
+		}
 	}
 
 	public void file2Db () {
 		try {
-			File file = new File("products.csv");
+			File file = new File("products2.csv");
 
 			FileReader input = new FileReader(file);
 
@@ -123,7 +195,7 @@ public class GearClubApplication implements CommandLineRunner {
 					}
             	}
 
-				if (images.size() > 10 || images.size() < 1) {
+				if (vendorName.length() > 50 || vendorName.length() < 2) {
 					log.info(name);
 				}
 
@@ -132,23 +204,29 @@ public class GearClubApplication implements CommandLineRunner {
 				product.setName(name);
 				product.setImages(images);
 				product.setVendorName(vendorName);
-				product.setPrice(price);
+				product.setPrice(Long.parseLong(price));
 				product.setFeatures(feature);
 				product.setIntro(intro);
-				product.setWarranty(warranty);
 
-				// System.out.println(product.getName());
-				// System.out.println(productRepository);
+				product.setWarranty(warranty.isEmpty() ? 0 : Integer.parseInt(warranty));
 
-				productRepository.save(product);
+				product.setCategory("mouse");
+
+				try {
+					productRepository.save(product);
+				}
+				catch (IllegalStateException e) {
+					e.printStackTrace();
+					log.info(e.toString());								
+				}
 			}
 			
 
 			reader.close();
 		}
 		catch (IOException event) {
-			event.printStackTrace();
-			log.info(event.toString());
+			// event.printStackTrace();
+			// log.info(event.toString());
 		}
 	}
 

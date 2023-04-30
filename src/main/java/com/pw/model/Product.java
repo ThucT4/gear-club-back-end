@@ -2,6 +2,7 @@ package com.pw.model;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
  
@@ -10,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import java.util.ArrayList;
@@ -42,10 +44,10 @@ public class Product extends AbstractEntity {
     private String vendorImage;
 
     // Price
-    @NotBlank
-    @Size(min = 4, max = 50)
+    @NonNull
+    // @Size(min = 4)
     @Column(name = "PRICE")
-    private String price;
+    private Long price;
 
     // design location
     @Size(max = 50)
@@ -53,9 +55,9 @@ public class Product extends AbstractEntity {
     private String designLocation;
 
     // Warranty
-    @Size(max = 50)
+    // @Size(max = 100)
     @Column(name = "WARRANTY")
-    private String warranty;
+    private Integer warranty;
 
     // Variants
     @Column(name = "VARIANTS")
@@ -70,4 +72,9 @@ public class Product extends AbstractEntity {
     @Size(max = 20)
     @Column(name = "FEATURES")
     private HashMap<String, String> features;
+
+    // Quantity of product
+    @NotBlank
+    @Column(name = "CATEGORY")
+    private String category;
 }

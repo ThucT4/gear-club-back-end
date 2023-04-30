@@ -1,14 +1,39 @@
+package com.pw;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.stream.Collectors;
+import java.util.List;
+
+import org.jsoup.*;
+import org.jsoup.nodes.*;
+import org.jsoup.select.*;
+
+import com.opencsv.CSVWriter;
+
+import org.jsoup.HttpStatusException;
+import org.jsoup.nodes.Document;
+
 public class fetchdata {
+
     public static void fetchData() throws IOException {
 		System.out.println("Entered");
 
 		Document doc = Jsoup.connect("https://gearvn.com/pages/chuot-may-tinh").get();
 
-		Elements links = doc.select("a[href~=https://gearvn.com/products]");
+		Elements linkEs = doc.select("a[href~=https://gearvn.com/products]");
+
+		List<String> links = linkEs.stream().map(e -> e.attr("href")).collect(Collectors.toList());
+
+		List<String> distincLinks = links.stream().distinct().collect(Collectors.toList());
 
 		int count = 0;
 
-		for (Element link : links) {
+		for (String link : distincLinks) {
 			try {
 				String name = "", vendorName = "", warranty = "",
 						price = "", intro = "";
@@ -17,7 +42,7 @@ public class fetchdata {
 
 				HashMap<String, String> features = new HashMap<String, String>();
 
-				Document curDoc = Jsoup.connect(link.attr("href")).get();
+				Document curDoc = Jsoup.connect(link).get();
 
 				name  = curDoc.selectFirst("h1.product_name").text();
 
@@ -28,12 +53,17 @@ public class fetchdata {
 					if (span.text().toLowerCase().contains("nhà sản xuất:") || span.text().toLowerCase().contains("hãng sản xuất:")
 						|| span.text().toLowerCase().contains("thương hiệu:") 
 						|| span.text().toLowerCase().contains("nhà sản xuất :")) {
-						vendorName = span.text();
+						
+						if (vendorName.isEmpty()) {
+							vendorName = span.text();
+						}	
 					}
 
 					// Get warranty
-					if (span.text().toLowerCase().contains("bảo hành")) {
-						warranty = span.text();
+					if (span.text().toLowerCase().contains("bảo hành:") || span.text().toLowerCase().contains("bảo hành :")) {
+						if (warranty.isEmpty()) {
+							warranty = span.text();
+						} 
 					}
 				}
 
@@ -96,7 +126,7 @@ public class fetchdata {
 						}
 
 						if (!introE.tagName().equals("p") || introE.text().isEmpty()) {
-							System.out.println(link.attr("href"));
+							System.out.println(link);
 						}
 					}
 
