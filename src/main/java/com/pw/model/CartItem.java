@@ -15,14 +15,13 @@ import javax.persistence.*;
 @EntityListeners(AuditingEntityListener.class)
 public class CartItem extends AbstractEntity {
     @OneToOne
-    @JoinColumn(name = "product_id", referencedColumnName = "id")
+    @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "id")
     private Product product;
 
     @ManyToOne
-    @JoinColumn(name = "shopping_cart_id", referencedColumnName = "id")
+    @JoinColumn(name = "SHOPPING_CART_ID", referencedColumnName = "id")
     private ShoppingCart shoppingCart;
 
-    private int quantity;
-
-
+    @Column(name = "QUANTITY")
+    private Integer quantity;
 }
