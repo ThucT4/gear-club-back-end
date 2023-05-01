@@ -47,4 +47,5 @@ public class CollectionController {
     public List<Collection> getAll() {
         return collectionService.findAll();
     }
+    
 }

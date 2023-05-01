@@ -145,7 +145,6 @@ public class fetchdata {
 				event.printStackTrace();
 			}
 		}
-
 	}
 
 	public static void initializeCollection() throws IOException{

@@ -63,6 +63,7 @@ public class CollectionService extends CrudService<Collection> {
 
     public List<Collection> findAll() {
         return collectionRepository.findAll();
+        
     }
 
     

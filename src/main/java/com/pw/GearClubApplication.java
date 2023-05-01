@@ -56,7 +56,7 @@ public class GearClubApplication implements CommandLineRunner {
 		
 		// Run the following 2 lines ONCE to initialize the table data
 		// file2Db("products.csv");
-		initCollection();
+		// initCollection();
 		
 		// log.info("Successfully initialize table Products");
 	}
