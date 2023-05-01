@@ -9,6 +9,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Entity
@@ -46,7 +47,7 @@ public class Customer extends AbstractEntity {
     @Column(name = "ADDRESS")
     private String shippingAddress;
 
-    // One-to-many relationship with Order entity
-    @OneToMany(mappedBy = "customer")
-    private List<OrderHistory> orders = new ArrayList<>();
+    //
+    @Column(name = "ShoppingCart")
+    private List<HashMap<Integer, Integer>> shoppingCart = new ArrayList<>();
 }
