@@ -60,5 +60,5 @@ public class Customer extends AbstractEntity {
 
     //
     @Column(name = "ShoppingCart")
-    private List<HashMap<Integer, Integer>> shoppingCart = new ArrayList<>();
+    private ArrayList<HashMap<Integer, Integer>> shoppingCart = new ArrayList<>();
 }

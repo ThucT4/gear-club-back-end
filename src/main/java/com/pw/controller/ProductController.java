@@ -47,40 +47,8 @@ public class ProductController {
         return productCrudService.findAll();
     }
 
-    @GetMapping(value = "/first10", produces = "application/json")
-    public List<Product> getFirst10() {
-        return productCrudService.getFirst10();
-    }
-
-    @GetMapping(value = "/collection/{query}", produces = "application/json")
+    @GetMapping(value = "/filter/{query}", produces = "application/json")
     public List<Product> getSecond10(@PathVariable String query) {
         return productCrudService.getCustom(query);
-    }
-
-    @PostMapping(value = "/vendor", produces = "application/json")
-    public List<Product> getByVendorName(@RequestBody String request) {
-        //remove curly brackets
-        String value = request.substring(1, request.length()-1); 
-                
-        //split the string to creat key-value pairs
-        String[] keyValuePairs = value.split(":");  
-
-        String listStr = keyValuePairs[1].trim();
-        
-        String listString = listStr.substring(1, listStr.length() - 1);
-
-        ArrayList<String> vendorNamesList  = new ArrayList<String>(Arrays.asList(listString.split(",")));
-
-        if (vendorNamesList.size() == 0) {
-            return productCrudService.findAll();
-        }
-
-        ArrayList<String> vendorNames = new ArrayList<>();
-
-        for (String vendorName : vendorNamesList) {
-            vendorNames.add(vendorName.replaceAll("\"", ""));
-        }
-
-        return productCrudService.getByVendorName(vendorNames);
     }
 }

@@ -47,18 +47,20 @@ public class ProductService extends CrudService<Product> {
         productDb.setImages(product.getImages());
 
         productDb.setVendorName(product.getVendorName());
-        // productDb.setVendorImage(product.getVendorImage());
 
-        // productDb.setDesignLocation(product.getDesignLocation());
+        productDb.setDesignLocation(product.getDesignLocation());
         productDb.setFeatures(product.getFeatures());
 
         productDb.setIntro(product.getIntro());
+        productDb.setTitle(product.getTitle());
+        productDb.setDescription(product.getDescription());
 
         productDb.setPrice(product.getPrice());
 
         productDb.setWarranty(product.getWarranty());
-
-        // productDb.setVariants(product.getVariants());
+        productDb.setCategory(product.getCategory());
+        productDb.setQuantity(product.getQuantity());
+        productDb.setHighlights(product.getHighlights());
  
         return productRepository.save(productDb);
     }
@@ -71,27 +73,6 @@ public class ProductService extends CrudService<Product> {
 
     public List<Product> findAll() {
         return productRepository.findAll();
-    }
-
-    public List<Product> getFirst10() {
-        return productRepository.findAll().stream().limit(10).collect(Collectors.toList()) ;
-
-    }
-
-    public List<Product> getSecond10() {
-        List<Product> all = productRepository.findAll();
-
-        if (all.size() > 10) {
-            if (all.size() < 20) {
-                return all.subList(10, all.size()-1);
-            }
-            else {
-                return all.subList(10, 19);
-            }
-        }
-        else {
-            throw new EntityNotFoundException("There are no more products.");
-        }
     }
 
     public List<Product> getCustom(String link) {
@@ -188,22 +169,5 @@ public class ProductService extends CrudService<Product> {
         }
 
         return result;
-    }
-
-    public List<Product> getByVendorName(ArrayList<String> vendorNames) {
-        List<Product> result = new ArrayList<>();
-
-        for (Product p : productRepository.findAll()) {
-            for (String vendorName : vendorNames) {
-                if (p.getVendorName().toLowerCase().contains(vendorName.toLowerCase())) {
-                    result.add(p);
-                }
-            }
-        }
-
-        return result;
-
-        // return productRepository.findAll().stream()
-        //     .filter(p -> vendorNames.contains(p.getVendorName().toLowerCase())).collect(Collectors.toList());
     }
 }

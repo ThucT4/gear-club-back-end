@@ -148,6 +148,41 @@ public class fetchdata {
 
 	}
 
+	public static void initializeCollection() throws IOException{
+		File file = new File("collections.csv");
+	
+		FileWriter output = new FileWriter(file, true);
+
+		CSVWriter writer = new CSVWriter(output);
+
+		HashMap<Integer, String> productList = new HashMap<>( );
+
+		// productList.put(62, "https://cdn.shopify.com/s/files/1/0636/9044/0949/files/chuot-khong-day-sieu-nhe-finalmouse-starlight-pro-tenz_4.jpg?v=1673945400&width=500");
+		// productList.put(7, "https://cdn.shopify.com/s/files/1/0636/9044/0949/files/banner-Lamzu-Atlantis.jpg?v=1676368457&width=1000");
+		// productList.put(41, "https://cdn.shopify.com/s/files/1/0636/9044/0949/files/banner-Pulsar-x2.jpg?v=1676368662&width=1000");
+		// productList.put(69, "https://cdn.shopify.com/s/files/1/0636/9044/0949/files/banner_Series_One_Pro.jpg?v=1676368587&width=1000");
+		// productList.put(4, "https://cdn.shopify.com/s/files/1/0636/9044/0949/files/banner-grip_corepad.jpg?v=1676368784&width=1000");
+		// productList.put(148, "https://cdn.shopify.com/s/files/1/0636/9044/0949/files/banner-feet-corepad.jpg?v=1676368797&width=1000");
+		// productList.put(111, "https://cdn.shopify.com/s/files/1/0636/9044/0949/files/Pulsar_x_Bruce_Lee_ES1_gaming_mouse_pad_XL_01_98c2cabe-0c7b-4672-b47a-be5cf9c20bb6.jpg?v=1679554051&width=800");
+
+		// productList.put(43, "https://cdn.shopify.com/s/files/1/0636/9044/0949/files/pad-mem-1500x1500.jpg?v=1676445325&width=1000");
+		// productList.put(9, "https://cdn.shopify.com/s/files/1/0636/9044/0949/files/pad-cung-1500x1500.jpg?v=1676445339&width=1000");
+
+		productList.put(163, "https://cdn.shopify.com/s/files/1/0636/9044/0949/files/V30Filco-convertible-3-1500x1500.jpg?v=1676456283&width=1000");
+		productList.put(148, "https://cdn.shopify.com/s/files/1/0636/9044/0949/files/Minila-r-1500x1500.jpg?v=1676445447&width=1000");
+		productList.put(137, "https://cdn.shopify.com/s/files/1/0636/9044/0949/files/V2-GMMK-pro-1500x1000.jpg?v=1676445447&width=1000");
+		productList.put(133, "https://cdn.shopify.com/s/files/1/0636/9044/0949/files/GMMK2-1500x1000.jpg?v=1676445448&width=1000");
+		productList.put(48, "https://cdn.shopify.com/s/files/1/0636/9044/0949/files/keycap-1500x1000.jpg?v=1676448363&width=1400");
+		
+		
+
+		String[] collection = {"Trend3", productList.toString()};
+
+		writer.writeNext(collection);
+
+		writer.close();
+	}
+
     public static void fetchData() throws IOException {
 		System.out.println("Entered");
 

@@ -28,13 +28,8 @@ public class Collection extends AbstractEntity {
     @Column(name = "NAME")
     private String name;
 
-    // Link to banner image
-    @NotNull
-    @Column(name = "Banner")
-    private String banner;
-
     // Array of product's ID
     @NotNull
     @Column(name = "PRODUCTLIST")
-    private HashMap<Integer, String> productID;
+    private HashMap<Integer, String> productList;
 }

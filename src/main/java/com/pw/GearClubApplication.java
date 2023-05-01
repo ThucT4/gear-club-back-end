@@ -28,7 +28,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
+import com.pw.model.Collection;
 import com.pw.model.Product;
+import com.pw.repository.CollectionRepository;
 import com.pw.repository.ProductRepository;
 
 import com.pw.fetchdata;
@@ -40,8 +42,11 @@ public class GearClubApplication implements CommandLineRunner {
 	@Autowired
     private ProductRepository productRepository;
 
+	@Autowired
+	private CollectionRepository collectionRepository;
+
 	public static void main(String[] args) throws IOException {
-		// fetchdata.fetchData2();
+		
 		SpringApplication.run(GearClubApplication.class, args);
 	}
 
@@ -50,27 +55,29 @@ public class GearClubApplication implements CommandLineRunner {
 		log.info("StartApplication...");
 		
 		// Run the following 2 lines ONCE to initialize the table data
-		// file2Db();
+		// file2Db("products.csv");
+		initCollection();
 		
 		// log.info("Successfully initialize table Products");
 	}
 
-	public void file2Db () {
+	public void file2Db (String fileName) {
 		try {
-			File file = new File("products.csv");
+			File file = new File(fileName);
 
 			FileReader input = new FileReader(file);
 
 			CSVReader reader = new CSVReader(input);
 
 			String[] row;
-			// String[] product = {name, vendorName, price, designLoc, warranty, images.toString(), intro, titleDescrip, description, feature.toString(), cate, quantity.toString()};
+			// 
 
 			String name = "", vendorName = "", price = "", warranty = ""
 			, intro = "", designLoc = "", titleDescrip = "", description = "", cate = "";
 			Integer quantity = 0;
 			ArrayList<String> images = new ArrayList<>();
 			HashMap<String, String> feature = new HashMap<>();
+			HashMap<String, String> highlights = new HashMap<>();
 
 			
 			while ( (row = reader.readNext()) != null) {
@@ -146,10 +153,36 @@ public class GearClubApplication implements CommandLineRunner {
 					}
 
 					else if (i == 10) {
-						cate = cell;
+						//remove curly brackets
+						String value = cell.substring(1, cell.length()-1); 
+						      
+						//split the string to creat key-value pairs
+						String[] keyValuePairs = value.split(",");  
+						
+						
+						highlights = new HashMap<String,String> ();               
+
+						//iterate over the pairs
+						for(String pair : keyValuePairs) {
+							//split the pairs to get key and value 
+							String[] entry = pair.split("=");   
+							
+							if (entry.length < 2) {
+								System.out.println(pair);
+							}
+
+							else {
+								//add them to the hashmap and trim whitespaces
+								highlights.put(entry[0].trim(), entry[1].trim());  
+							}        
+						}
 					}
 
 					else if (i == 11) {
+						cate = cell;
+					}
+
+					else if (i == 12) {
 						quantity = Integer.parseInt(cell);
 					}
             	}
@@ -172,6 +205,7 @@ public class GearClubApplication implements CommandLineRunner {
 				product.setCategory(cate);
 
 				product.setQuantity(quantity);
+				product.setHighlights(highlights);
 
 				try {
 					productRepository.save(product);
@@ -189,4 +223,65 @@ public class GearClubApplication implements CommandLineRunner {
 		}
 	}
 
+	public void initCollection () {
+		try {
+			File file = new File("collections.csv");
+
+			FileReader input = new FileReader(file);
+
+			CSVReader reader = new CSVReader(input);
+
+			String[] row;
+
+			String name = "";
+			HashMap<Integer, String> productList = new HashMap<>();
+
+			while ( (row = reader.readNext()) != null) {
+				for (int i = 0; i < row.length; i++) {
+					String cell = row[i];
+
+					if (i == 0) {
+						name = cell;
+					}
+
+					else {
+						//remove curly brackets
+						String value = cell.substring(1, cell.length()-1); 
+								
+						//split the string to creat key-value pairs
+						String[] keyValuePairs = value.split(",");  
+						
+						
+						productList = new HashMap<Integer,String> ();               
+
+						//iterate over the pairs
+						for(String pair : keyValuePairs) {
+							//split the pairs to get key and value 
+							String[] entry = pair.split("=");   
+							
+							if (entry.length < 2) {
+								System.out.println(pair);
+							}
+
+							else {
+								//add them to the hashmap and trim whitespaces
+								productList.put(Integer.parseInt(entry[0].trim()), entry[1].trim());  
+							}        
+						}
+					}
+				}
+
+				Collection collection = new Collection();
+
+				collection.setName(name);
+				collection.setProductList(productList);
+
+				collectionRepository.save(collection);
+			}
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+}
 }
