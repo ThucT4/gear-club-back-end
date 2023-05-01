@@ -46,7 +46,6 @@ public class GearClubApplication implements CommandLineRunner {
 	private CollectionRepository collectionRepository;
 
 	public static void main(String[] args) throws IOException {
-		
 		SpringApplication.run(GearClubApplication.class, args);
 	}
 

@@ -32,4 +32,5 @@ public class Collection extends AbstractEntity {
     @NotNull
     @Column(name = "PRODUCTLIST")
     private HashMap<Integer, String> productList;
+    
 }
