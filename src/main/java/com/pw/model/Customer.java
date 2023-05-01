@@ -8,6 +8,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "Customers")
@@ -43,4 +45,8 @@ public class Customer extends AbstractEntity {
     @Size(max = 1024)
     @Column(name = "ADDRESS")
     private String shippingAddress;
+
+    // One-to-many relationship with Order entity
+    @OneToMany(mappedBy = "customer")
+    private List<OrderHistory> orders = new ArrayList<>();
 }
