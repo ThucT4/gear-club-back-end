@@ -19,6 +19,17 @@ import java.util.List;
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class Customer extends AbstractEntity {
+
+    @NotBlank
+    @Size(max = 20)
+    @Column(name = "USERNAME")
+    private String username;
+
+    @NotBlank
+    @Size(max = 50)
+    @Column(name = "PASSWORD")
+    private String password;
+
     //First name
     @NotBlank
     @Size(max = 20)
