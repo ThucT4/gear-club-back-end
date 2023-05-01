@@ -104,20 +104,23 @@ public class ProductService extends CrudService<Product> {
         for (String query : queries) {
             String[] querySplit = query.split("=");
 
-            if (querySplit[0] == "pageNum") {
+            if (querySplit[0].equals("pageNum")) {
                 pageNum = Integer.parseInt(querySplit[1]);
             }
 
-            if (querySplit[0] == "itemsPerPage") {
+            if (querySplit[0].equals("itemsPerPage")) {
                 itemsPerPage = Integer.parseInt(querySplit[1]);
             }
 
             // Filter quantity
-            // if (querySplit[0] == "availability") {
-            //     for (Product p : all) {
-            //         if ( ())
-            //     }
-            // }
+            if (querySplit[0].equals("availability")) {
+                if (querySplit[1].equals("true")) {
+                    result.removeIf(p -> p.getQuantity() < 1);
+                }
+                else if (querySplit[1].equals("false")) {
+                    result.removeIf(p -> p.getQuantity() > 0);
+                }
+            }
 
             // Filter brand(s)
             if (querySplit[0].equals("brands")) {
@@ -169,13 +172,20 @@ public class ProductService extends CrudService<Product> {
             }
         }
 
-        if (pageNum*itemsPerPage > 0) {
-            if (pageNum*itemsPerPage < result.size()) {
-                return result.subList(pageNum*itemsPerPage, pageNum*itemsPerPage);
+        // Pagination
+        if (pageNum*itemsPerPage > 0 && itemsPerPage < result.size()) {
+            if (pageNum*itemsPerPage > result.size()) {
+                if ((pageNum - 1)*itemsPerPage < result.size()) {
+                    return result.subList( (pageNum - 1)*itemsPerPage, result.size());
+                }
+
+                return null;
+            }
+            else {
+                System.out.println(result.subList((pageNum - 1)*itemsPerPage, pageNum*itemsPerPage).size());
+                return result.subList((pageNum - 1)*itemsPerPage, pageNum*itemsPerPage);
             }
         }
-
-        // System.out.println("Chuột Logitech G Pro X Superlight Wireless Red".compareToIgnoreCase("Chuột ASUS ROG Harpe Ace Aim Lab Edition"));
 
         return result;
     }

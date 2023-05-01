@@ -6,8 +6,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.stream.Collectors;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.jsoup.*;
 import org.jsoup.nodes.*;
@@ -19,6 +21,132 @@ import org.jsoup.HttpStatusException;
 import org.jsoup.nodes.Document;
 
 public class fetchdata {
+	public static void fetchData2() throws IOException {
+		System.out.println("Entered");
+
+		Document doc = Jsoup.connect("https://www.phongcachxanh.vn/collections/lot-chuot").get();
+
+		Elements linkEs = doc.select("a[href~=/products/lot-chuot]");
+		List<String> links = linkEs.stream().map(e -> e.attr("href")).collect(Collectors.toList());
+
+		System.out.println(links.size());
+		List<String> distincLinks = new ArrayList<>(new HashSet<>(links));
+		System.out.println(distincLinks.size());
+
+		for (String link : distincLinks) {
+			String name = "", vendorName = "", warranty = "",
+						price = "", intro = "", designLoc = "", description = "", titleDescrip = "";
+
+			ArrayList<String> images = new ArrayList<String>();
+
+			HashMap<String, String> features = new HashMap<String, String>();
+			HashMap<String, String> highlights = new HashMap<String, String>();
+
+
+			Document curDoc = Jsoup.connect("https://www.phongcachxanh.vn/" + link).get();
+
+			name = curDoc.selectFirst("h1[class~=product-info__title]").text();
+
+			vendorName = curDoc.selectFirst("div.product-info__vendor").text();
+
+			price = curDoc.selectFirst("sale-price").text().replaceAll("[^\\d]", "");;
+
+			Elements thumbnail = curDoc.select("page-dots.product-gallery__thumbnail-list").select("button.product-gallery__thumbnail");
+
+			for (Element thumb : thumbnail) {
+				String imgLink = thumb.selectFirst("img").attr("src");
+
+				images.add("https:" + imgLink);
+			}
+
+			if (images.size() < 1 ) {
+				images.add("https://cdn.shopify.com/s/files/1/0636/9044/0949/products/lot-chu-t-glorious-elements-air-mouse-pad-xl-37010435834101.png?v=1677169275&width=700");
+			}
+
+			
+			String[] locs = {"USA", "korea", "denmark"};
+
+			designLoc = locs[ThreadLocalRandom.current().nextInt(0, 3)];
+
+			intro = "Đế poron vừa chống trượt hoàn hảo, vừa tạo độ mềm vừa phải giúp tăng stopping power (khả năng dừng chuột tức thời) sau mỗi cú flick chuột.";
+
+			if (!curDoc.select("strong:contains(Bảo hành:)").isEmpty()) {
+				warranty = curDoc.selectFirst("strong:contains(Bảo hành:)").text().replaceAll("[^\\d]", "");
+				
+			}
+
+
+			if (curDoc.select("div.section-stack__intro").isEmpty()) {
+				titleDescrip = "Bề mặt vải Polyester cao cấp";
+				description = "Được thiết kế tập trung vào độ control, dừng chuột và tracking. Mặt vải mềm trung tính phù hợp và dễ làm quen trong nhiều nhu cầu sử dụng.";
+				// titleDescrip = "Đối xứng - PAW3395";
+				// description = name + " là mẫu chuột đối xứng giúp bạn chơi game và giành lấy những vị trí cao thật cao trên bảng xếp hạng. Trọng lượng khoảng dưới 60 gram, thiết kế không lỗ cùng thời lượng pin lên đến 70 giờ giúp bạn sử dụng chuột cả ngày dài mà không lo mệt mỏi như những mẫu chuột không dây nặng nề truyền thống.";
+				
+				// features.put("Kết nối không dây", "LIGHTSPEED");
+				// features.put("Độ chính xác tiên tiến", "CẢM BIẾN HERO 25K");
+				// features.put("Tương thích sạc không dây", "POWERPLAY");
+
+				// highlights.put("LIGHTSPEED", "Kết nối không dây");
+				// highlights.put("CẢM BIẾN HERO 25K", "Độ chính xác tiên tiến");
+				// highlights.put("POWERPLAY", "Tương thích sạc không dây");
+
+				features.put("Loại bề mặt", "Control");
+				features.put("Chất liệu đế", "Poron");
+				features.put("Tương thích sạc không dây", "Poron");
+
+				highlights.put("Control", "Loại bề mặt");
+				highlights.put("CẢM BIẾN HERO 25K", "Độ chính xác tiên tiến");
+				highlights.put("Poron", "Chất liệu đế");
+			}
+
+			else {
+
+				if (curDoc.selectFirst("div.section-stack__intro").select("h2").isEmpty()) {
+					titleDescrip = "Bề mặt vải Polyester cao cấp";
+				} 
+				else {
+					titleDescrip = curDoc.selectFirst("div.section-stack__intro").selectFirst("h2").text();
+				}
+
+				description = curDoc.selectFirst("div.section-stack__intro").selectFirst("div.metafield-rich_text_field").text();
+				
+				Elements rows = curDoc.selectFirst("div[class~=feature-chart__table]").select("div.feature-chart__table-row");
+
+				for (Element row : rows) {
+					String fName = row.selectFirst("div[class~=feature-chart__heading]").text();
+					String feature = row.selectFirst("div[class~=feature-chart__value]").text().replaceAll(",", " ");
+
+					features.put(fName, feature);
+				}
+
+				Elements bigs = curDoc.select("impact-text");
+				Elements smalls = curDoc.select("div.impact-text__content");
+
+				for (int i = 0; i < bigs.size(); i++) {
+					highlights.put(bigs.get(i).text(), smalls.get(i).text());
+				}
+			}
+
+			String[] pad = {name, vendorName, price, designLoc, warranty, images.toString(), intro, titleDescrip, description, features.toString(), highlights.toString()};
+
+			try {
+				File file = new File("pads.csv");
+	
+				FileWriter output = new FileWriter(file, true);
+	
+				CSVWriter writer = new CSVWriter(output);
+	
+				writer.writeNext(pad);
+	
+				writer.close();
+			}
+			catch (IOException event) {
+				System.out.println(pad);
+				event.printStackTrace();
+			}
+		}
+
+	}
 
     public static void fetchData() throws IOException {
 		System.out.println("Entered");

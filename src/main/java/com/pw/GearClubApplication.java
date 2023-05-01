@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.jsoup.*;
 import org.jsoup.nodes.*;
@@ -40,100 +41,34 @@ public class GearClubApplication implements CommandLineRunner {
     private ProductRepository productRepository;
 
 	public static void main(String[] args) throws IOException {
-		// fetchdata.fetchData();
-		// fixData();
+		// fetchdata.fetchData2();
 		SpringApplication.run(GearClubApplication.class, args);
 	}
 
 	@Override
   	public void run(String... args) {
 		log.info("StartApplication...");
-		// System.out.println(Integer.parseInt(""));
-		
 		
 		// Run the following 2 lines ONCE to initialize the table data
 		// file2Db();
+		
 		// log.info("Successfully initialize table Products");
-	}
-
-	public static void fixData() {
-		try {
-			File inFile = new File("products.csv");
-			FileReader input = new FileReader(inFile);
-			CSVReader reader = new CSVReader(input);
-
-			File outFile = new File("products2.csv");
-			FileWriter output = new FileWriter(outFile, true);
-			CSVWriter writer = new CSVWriter(output);
-
-			String[] row;
-
-			while ( (row = reader.readNext()) != null) {
-				ArrayList<String> product = new ArrayList<String>();
-
-				for (int i = 0; i < row.length; i++) {
-					String cell = row[i];
-
-					if (i == 1) {
-						String[] redunt = {"nhà sản xuất:", "hãng sản xuất:", "thương hiệu:", "nhà sản xuất :", "·"};
-
-						cell = cell.toLowerCase();
-
-						for (String s : redunt) {
-							cell = cell.replaceAll(s, "");
-						}
-					}
-
-					else if (i == 2) {
-						cell = cell.replaceAll(",", "");
-						cell = cell.replaceAll("₫", "");
-					}
-					
-					else if (i == 3) {
-						String[] redunt = {"bảo hành", ":", " tháng", "·", "[^\\d]", " ́"};
-
-						cell = cell.toLowerCase();
-
-						for (String s : redunt) {
-							cell = cell.replaceAll(s, "");
-						}
-						
-						if (cell.contains(" tháng")) {
-							System.out.println(cell);
-						}
-					}
-
-					product.add(cell.trim());
-
-            	}
-				String[] data = product.toArray(new String[0]);
-
-				writer.writeNext(data);
-				
-			}
-
-			reader.close();
-			writer.close();
-
-		}
-		catch (IOException event) {
-			event.printStackTrace();
-			log.info(event.toString());
-		}
 	}
 
 	public void file2Db () {
 		try {
-			File file = new File("products2.csv");
+			File file = new File("products.csv");
 
 			FileReader input = new FileReader(file);
 
 			CSVReader reader = new CSVReader(input);
 
 			String[] row;
-			// String[] product = {name, vendorName, price, warranty, images.toString(), intro, features.toString()};
+			// String[] product = {name, vendorName, price, designLoc, warranty, images.toString(), intro, titleDescrip, description, feature.toString(), cate, quantity.toString()};
 
-			String name = "", vendorName = "", price = "", warranty = "", intro = "";
+			String name = "", vendorName = "", price = "", warranty = ""
+			, intro = "", designLoc = "", titleDescrip = "", description = "", cate = "";
+			Integer quantity = 0;
 			ArrayList<String> images = new ArrayList<>();
 			HashMap<String, String> feature = new HashMap<>();
 
@@ -153,22 +88,38 @@ public class GearClubApplication implements CommandLineRunner {
 					else if (i == 2) {
 						price = cell;
 					}
-					
+
 					else if (i == 3) {
+						designLoc = cell;
+					}
+					
+					else if (i == 4) {
 						warranty = cell;
+
+						if (warranty.isEmpty()) {
+							warranty = String.valueOf(ThreadLocalRandom.current().nextInt(1, 24));
+						}
 					}
 
-					else if (i == 4) {
+					else if (i == 5) {
 						String listString = cell.substring(1, cell.length() - 1);
 
 						images = new ArrayList<String>(Arrays.asList(listString.split(",")));
 					}
 					
-					else if (i == 5) {
+					else if (i == 6) {
 						intro = cell;
 					}
 
-					else if (i == 6) {
+					else if (i == 7) {
+						titleDescrip = cell;
+					}
+
+					else if (i == 8) {
+						description = cell;
+					}
+
+					else if (i == 9) {
 						//remove curly brackets
 						String value = cell.substring(1, cell.length()-1); 
 						      
@@ -193,24 +144,34 @@ public class GearClubApplication implements CommandLineRunner {
 							}        
 						}
 					}
-            	}
 
-				if (vendorName.length() > 50 || vendorName.length() < 2) {
-					log.info(name);
-				}
+					else if (i == 10) {
+						cate = cell;
+					}
+
+					else if (i == 11) {
+						quantity = Integer.parseInt(cell);
+					}
+            	}
 
 				Product product = new Product();
 
 				product.setName(name);
 				product.setImages(images);
 				product.setVendorName(vendorName);
+				product.setWarranty(Integer.parseInt(warranty));
 				product.setPrice(Long.parseLong(price));
 				product.setFeatures(feature);
 				product.setIntro(intro);
+				product.setTitle(titleDescrip);
+				product.setDescription(description);
+				product.setDesignLocation(designLoc);
 
 				product.setWarranty(warranty.isEmpty() ? 0 : Integer.parseInt(warranty));
 
-				product.setCategory("mouse");
+				product.setCategory(cate);
+
+				product.setQuantity(quantity);
 
 				try {
 					productRepository.save(product);
@@ -220,8 +181,6 @@ public class GearClubApplication implements CommandLineRunner {
 					log.info(e.toString());								
 				}
 			}
-			
-
 			reader.close();
 		}
 		catch (IOException event) {

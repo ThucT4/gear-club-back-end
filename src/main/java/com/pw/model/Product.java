@@ -24,12 +24,12 @@ import java.util.HashMap;
 public class Product extends AbstractEntity {
     // Name of product
     @NotBlank
-    @Size(max = 75)
+    @Size(max = 150)
     @Column(name = "NAME")
     private String name;
 
     // Array list of images
-    @Size(min = 1, max = 14)
+    @Size(min = 1, max = 20)
     @Column(name = "IMAGES", length = 1024)
     private ArrayList<String> images;
  
@@ -38,10 +38,6 @@ public class Product extends AbstractEntity {
     @Size(min = 2, max = 50)
     @Column(name = "VENDORNAME")
     private String vendorName;
-
-    // Image of vendor
-    @Column(name = "VENDORIMAGE", length = 400)
-    private String vendorImage;
 
     // Price
     @NonNull
@@ -59,22 +55,35 @@ public class Product extends AbstractEntity {
     @Column(name = "WARRANTY")
     private Integer warranty;
 
-    // Variants
-    @Column(name = "VARIANTS")
-    private ArrayList<String> variants;
-
     // Introduction
     @NotBlank
     @Column(name = "INTRODUCTION", length = 1024, columnDefinition = "text")
     private String intro;
+
+    // Title of description
+    @Column(name = "TITLEDESCRIPTION", length = 1024, columnDefinition = "text")
+    private String title;
+
+    // Description
+    @NotBlank
+    @Column(name = "Description", length = 1024, columnDefinition = "text")
+    private String description;
 
     // Array list of features
     @Size(max = 20)
     @Column(name = "FEATURES")
     private HashMap<String, String> features;
 
-    // Quantity of product
+    // Category
     @NotBlank
     @Column(name = "CATEGORY")
     private String category;
+
+    // Highlights
+    @Column(name = "HIGHLIGHTS")
+    private HashMap<String, String> highlights;
+
+    // Quantity
+    @Column(name = "QUANTITY")
+    private Integer quantity;
 }
