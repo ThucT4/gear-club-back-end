@@ -13,12 +13,14 @@ public class CustomerService extends CrudService<Customer> {
 
     @Autowired
     private CustomerRepository customerRepository;
+    @Autowired
+    private ProductService productCrudService;
 
-    public List<Customer> getAllCustomers() {
+    public List<Customer> findAll() {
         return customerRepository.findAll();
     }
 
-    public Customer retrieve(Integer id) {
+    public Customer retrieve(int id) {
         return customerRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Customer with id: "+ id + " not found"));
     }
@@ -27,8 +29,9 @@ public class CustomerService extends CrudService<Customer> {
         return customerRepository.save(customer);
     }
 
-    public Customer update(Integer id, Customer customerDetails) {
-        Customer customer = retrieve(id);
+    public Customer update(Customer customerDetails) {
+        Customer customer = customerRepository.findById(customerDetails.getId()).orElseThrow(
+                () -> new EntityNotFoundException("Customer with id: "+ customerDetails.getId() + " not found"));
         customer.setUsername(customerDetails.getUsername());
         customer.setPassword(customerDetails.getPassword());
         customer.setFirstName(customerDetails.getFirstName());
@@ -40,8 +43,11 @@ public class CustomerService extends CrudService<Customer> {
         return customerRepository.save(customer);
     }
 
-    public void delete(Integer id) {
-        Customer customer = retrieve(id);
-        customerRepository.delete(customer);
+    public void delete(int id) {
+        customerRepository.deleteById(id);
+    }
+
+    public void addToCart(int productId, int quantity) {
+
     }
 }
