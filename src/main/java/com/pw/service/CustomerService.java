@@ -94,7 +94,7 @@ public class CustomerService extends CrudService<Customer> {
     }
 
     public String removeFromCart(int customerId, int productId) {
-        if(isItemInCart(customerId,productId)) {
+        if(!isItemInCart(customerId,productId)) {
             return "database_error";
         } else {
             removeItemFromCart(customerId,productId);
