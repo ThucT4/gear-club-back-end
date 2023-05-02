@@ -9,7 +9,7 @@ import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Service
-public class CustomerService {
+public class CustomerService extends CrudService<Customer> {
 
     @Autowired
     private CustomerRepository customerRepository;
@@ -18,17 +18,17 @@ public class CustomerService {
         return customerRepository.findAll();
     }
 
-    public Customer getCustomerById(Integer id) {
+    public Customer retrieve(Integer id) {
         return customerRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Customer with id: "+ id + " not found"));
     }
 
-    public Customer createCustomer(Customer customer) {
+    public Customer create(Customer customer) {
         return customerRepository.save(customer);
     }
 
-    public Customer updateCustomer(Integer id, Customer customerDetails) {
-        Customer customer = getCustomerById(id);
+    public Customer update(Integer id, Customer customerDetails) {
+        Customer customer = retrieve(id);
         customer.setUsername(customerDetails.getUsername());
         customer.setPassword(customerDetails.getPassword());
         customer.setFirstName(customerDetails.getFirstName());
@@ -40,8 +40,8 @@ public class CustomerService {
         return customerRepository.save(customer);
     }
 
-    public void deleteCustomer(Integer id) {
-        Customer customer = getCustomerById(id);
+    public void delete(Integer id) {
+        Customer customer = retrieve(id);
         customerRepository.delete(customer);
     }
 }
