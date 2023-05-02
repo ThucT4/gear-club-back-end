@@ -18,19 +18,23 @@ public class CustomerService extends CrudService<Customer> {
     @Autowired
     private ProductService productCrudService;
 
+    @Override
     public List<Customer> findAll() {
         return customerRepository.findAll();
     }
 
+    @Override
     public Customer retrieve(int id) {
         return customerRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Customer with id: "+ id + " not found"));
     }
 
+    @Override
     public Customer create(Customer customer) {
         return customerRepository.save(customer);
     }
 
+    @Override
     public Customer update(Customer customerDetails) {
         Customer customer = customerRepository.findById(customerDetails.getId()).orElseThrow(
                 () -> new EntityNotFoundException("Customer with id: "+ customerDetails.getId() + " not found"));
@@ -45,6 +49,7 @@ public class CustomerService extends CrudService<Customer> {
         return customerRepository.save(customer);
     }
 
+    @Override
     public void delete(int id) {
         customerRepository.deleteById(id);
     }
@@ -64,6 +69,15 @@ public class CustomerService extends CrudService<Customer> {
         update(customer);
     }
 
+    public void removeItemFromCart(int customerId, int productId) {
+        Customer customer = customerRepository.findById(customerId).orElseThrow(
+                () -> new EntityNotFoundException("Customer with id: "+ customerId + " not found"));
+        List<HashMap<Integer, Integer>> shoppingCart = customer.getShoppingCart();
+        customer.getShoppingCart().get(shoppingCart.size() - 1).remove(productId);
+        update(customer);
+    }
+
+
     public String addToCart(int customerId, int productId, int quantity) {
         Customer customer = customerRepository.findById(customerId).orElseThrow(
                 () -> new EntityNotFoundException("Customer with id: "+ customerId + " not found"));
@@ -79,8 +93,44 @@ public class CustomerService extends CrudService<Customer> {
         }
     }
 
-//    public String increaseQuantityCart(int customerId, int productId, int quantity) {
-//        Customer customer = customerRepository.findById(customerId).orElseThrow(
-//                () -> new EntityNotFoundException("Customer with id: "+ customerId + " not found"));
-//    }
+    public String removeFromCart(int customerId, int productId) {
+        if(isItemInCart(customerId,productId)) {
+            return "database_error";
+        } else {
+            removeItemFromCart(customerId,productId);
+            return "success";
+        }
+    }
+
+    public String increaseQuantityCart(int customerId, int productId) {
+        Customer customer = customerRepository.findById(customerId).orElseThrow(
+                () -> new EntityNotFoundException("Customer with id: "+ customerId + " not found"));
+        Product product = productCrudService.retrieve(productId);
+        List<HashMap<Integer, Integer>> shoppingCart = customer.getShoppingCart();
+        HashMap<Integer, Integer> lastestCart = shoppingCart.get(shoppingCart.size() - 1);
+
+        if(lastestCart.get(productId) + 1 > product.getQuantity()){
+            return "database_error";
+        } else {
+            customer.getShoppingCart().get(shoppingCart.size() - 1).put(productId,lastestCart.get(productId)+1);
+            update(customer);
+            return "success";
+        }
+    }
+
+    public String decreaseQuantityCart(int customerId, int productId) {
+        Customer customer = customerRepository.findById(customerId).orElseThrow(
+                () -> new EntityNotFoundException("Customer with id: "+ customerId + " not found"));
+        Product product = productCrudService.retrieve(productId);
+        List<HashMap<Integer, Integer>> shoppingCart = customer.getShoppingCart();
+        HashMap<Integer, Integer> latestCart = shoppingCart.get(shoppingCart.size() - 1);
+
+        if(latestCart.get(productId) - 1 > product.getQuantity()){
+            return "database_error";
+        } else {
+            customer.getShoppingCart().get(shoppingCart.size() - 1).put(productId,latestCart.get(productId)-1);
+            update(customer);
+            return "success";
+        }
+    }
 }
