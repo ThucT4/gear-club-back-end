@@ -107,12 +107,12 @@ public class CustomerService extends CrudService<Customer> {
                 () -> new EntityNotFoundException("Customer with id: "+ customerId + " not found"));
         Product product = productCrudService.retrieve(productId);
         List<HashMap<Integer, Integer>> shoppingCart = customer.getShoppingCart();
-        HashMap<Integer, Integer> lastestCart = shoppingCart.get(shoppingCart.size() - 1);
+        HashMap<Integer, Integer> latestCart = shoppingCart.get(shoppingCart.size() - 1);
 
-        if(lastestCart.get(productId) + 1 > product.getQuantity()){
+        if(latestCart.get(productId) + 1 > product.getQuantity()){
             return "database_error";
         } else {
-            customer.getShoppingCart().get(shoppingCart.size() - 1).put(productId,lastestCart.get(productId)+1);
+            customer.getShoppingCart().get(shoppingCart.size() - 1).put(productId,latestCart.get(productId)+1);
             update(customer);
             return "success";
         }
