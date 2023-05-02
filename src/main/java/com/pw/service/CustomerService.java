@@ -1,11 +1,13 @@
 package com.pw.service;
 
 import com.pw.model.Customer;
+import com.pw.model.Product;
 import com.pw.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -47,7 +49,33 @@ public class CustomerService extends CrudService<Customer> {
         customerRepository.deleteById(id);
     }
 
-    public void addToCart(int productId, int quantity) {
+    public boolean isItemInCart(int customerId, int productId){
+        Customer customer = customerRepository.findById(customerId).orElseThrow(
+                () -> new EntityNotFoundException("Customer with id: "+ customerId + " not found"));
+        List<HashMap<Integer, Integer>> shoppingCart = customer.getShoppingCart();
+        return shoppingCart.get(shoppingCart.size() - 1).containsKey(productId);
+    }
 
+    public void addItemToCart(int customerId, int productId, int quantity) {
+        Customer customer = customerRepository.findById(customerId).orElseThrow(
+                () -> new EntityNotFoundException("Customer with id: "+ customerId + " not found"));
+        List<HashMap<Integer, Integer>> shoppingCart = customer.getShoppingCart();
+        customer.getShoppingCart().get(shoppingCart.size() - 1).put(productId,quantity);
+        update(customer);
+    }
+
+    public String addToCart(int customerId, int productId, int quantity) {
+        Customer customer = customerRepository.findById(customerId).orElseThrow(
+                () -> new EntityNotFoundException("Customer with id: "+ customerId + " not found"));
+        Product product = productCrudService.retrieve(productId);
+
+        if(isItemInCart(customerId,productId)) {
+            return "duplicated";
+        } else if(quantity >= product.getQuantity()) {
+            return "database_error";
+        } else {
+            addItemToCart(customerId,productId,quantity);
+            return "success";
+        }
     }
 }
