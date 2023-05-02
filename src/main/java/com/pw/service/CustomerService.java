@@ -78,4 +78,9 @@ public class CustomerService extends CrudService<Customer> {
             return "success";
         }
     }
+
+//    public String increaseQuantityCart(int customerId, int productId, int quantity) {
+//        Customer customer = customerRepository.findById(customerId).orElseThrow(
+//                () -> new EntityNotFoundException("Customer with id: "+ customerId + " not found"));
+//    }
 }
