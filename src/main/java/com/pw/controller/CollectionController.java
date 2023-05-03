@@ -37,8 +37,8 @@ public class CollectionController {
         return collectionService.update(collection);
     }
  
-    @DeleteMapping(value = "/")
-    public String delete(int id) {
+    @DeleteMapping(value = "/{id}")
+    public String delete(@PathVariable int id) {
         collectionService.delete(id);
         return "Done";
     }

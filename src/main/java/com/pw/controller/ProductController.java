@@ -36,8 +36,8 @@ public class ProductController {
         return productCrudService.update(product);
     }
  
-    @DeleteMapping(value = "/")
-    public String delete(int id) {
+    @DeleteMapping(value = "/{id}")
+    public String delete(@PathVariable int id) {
         productCrudService.delete(id);
         return "Done";
     }
