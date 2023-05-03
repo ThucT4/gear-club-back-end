@@ -40,8 +40,7 @@ public class CustomerService extends CrudService<Customer> {
                 () -> new EntityNotFoundException("Customer with id: "+ customerDetails.getId() + " not found"));
         customer.setUsername(customerDetails.getUsername());
         customer.setPassword(customerDetails.getPassword());
-        customer.setFirstName(customerDetails.getFirstName());
-        customer.setLastName(customerDetails.getLastName());
+        customer.setName(customerDetails.getName());
         customer.setEmail(customerDetails.getEmail());
         customer.setPhone(customerDetails.getPhone());
         customer.setShippingAddress(customerDetails.getShippingAddress());

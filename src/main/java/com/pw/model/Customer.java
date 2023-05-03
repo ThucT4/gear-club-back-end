@@ -33,14 +33,8 @@ public class Customer extends AbstractEntity {
     //First name
     @NotBlank
     @Size(max = 20)
-    @Column(name = "FIRSTNAME")
-    private String firstName;
-
-    //Customer last name
-    @NotBlank
-    @Size(max = 50)
-    @Column(name = "LASTNAME")
-    private String lastName;
+    @Column(name = "NAME")
+    private String name;
 
     //Customer email
     @NotBlank
