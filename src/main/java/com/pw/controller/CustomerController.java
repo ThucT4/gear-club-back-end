@@ -1,12 +1,12 @@
 package com.pw.controller;
 
 import com.pw.model.Customer;
-import com.pw.model.Product;
-import com.pw.model.ProductForm;
 import com.pw.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/customer")
@@ -38,24 +38,24 @@ public class CustomerController {
         return "Done";
     }
 
-    @PutMapping(value = "/cart/")
-    public String addItem(@RequestBody ProductForm productForm) {
-        return customerService.serviceAddToCart(productForm.getCustomerID(), productForm.getCustomerID(), productForm.getQuantity());
+    @PutMapping(value = "/cart/", consumes = "application/json")
+    public String addItem(@RequestBody Map<String, Integer> productForm) {
+        return customerService.serviceAddToCart(productForm.get("customerID"), productForm.get("productID"), productForm.get("quantity"));
     }
 
-    @PutMapping(value = "/cart/")
-    public String removeItem(@RequestBody ProductForm productForm) {
-        return customerService.serviceRemoveFromCart(productForm.getCustomerID(), productForm.getProductID());
+    @PutMapping(value = "/cart/", consumes = "application/json")
+    public String removeItem(@RequestBody Map<String, Integer> productForm) {
+        return customerService.serviceRemoveFromCart(productForm.get("customerID"), productForm.get("productID"));
     }
 
-    @PutMapping(value = "/cart/")
-    public String increaseQuantity(@RequestBody ProductForm productForm) {
-        return customerService.increaseQuantityCart(productForm.getCustomerID(), productForm.getProductID());
+    @PutMapping(value = "/cart/", consumes = "application/json")
+    public String increaseQuantity(@RequestBody Map<String, Integer> productForm) {
+        return customerService.increaseQuantityCart(productForm.get("customerID"), productForm.get("productID"));
     }
 
-    @PutMapping(value = "/cart/")
-    public String decreaseQuantity(@RequestBody ProductForm productForm) {
-        return customerService.decreaseQuantityCart(productForm.getCustomerID(), productForm.getProductID());
+    @PutMapping(value = "/cart/", consumes = "application/json")
+    public String decreaseQuantity(@RequestBody Map<String, Integer> productForm) {
+        return customerService.decreaseQuantityCart(productForm.get("customerID"), productForm.get("productID"));
     }
 
 }

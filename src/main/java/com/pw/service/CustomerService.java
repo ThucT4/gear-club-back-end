@@ -3,12 +3,15 @@ package com.pw.service;
 import com.pw.model.Customer;
 import com.pw.model.Product;
 import com.pw.repository.CustomerRepository;
+import com.pw.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 public class CustomerService extends CrudService<Customer> {
@@ -58,6 +61,21 @@ public class CustomerService extends CrudService<Customer> {
                 () -> new EntityNotFoundException("Customer with id: " + customerId + " not found"));
         List<HashMap<Integer, Integer>> shoppingCart = customer.getShoppingCart();
         return customer.getShoppingCart().get(shoppingCart.size() - 1);
+    }
+
+    public List<HashMap<Integer, Integer>> findAllCart(int customerId) {
+        Customer customer = customerRepository.findById(customerId).orElseThrow(
+                () -> new EntityNotFoundException("Customer with id: " + customerId + " not found"));
+        return customer.getShoppingCart();
+    }
+
+    public int getTotalPrice(HashMap<Integer, Integer> shoppingCart) {
+        int totalPrice = 0;
+        for(Map.Entry<Integer,Integer> cart : shoppingCart.entrySet()) {
+            Product product = productCrudService.retrieve(cart.getKey());
+            totalPrice = totalPrice + (product.getPrice().intValue() * cart.getValue());
+        }
+        return totalPrice;
     }
 
     public boolean isItemInCart(int customerId, int productId){
@@ -131,7 +149,7 @@ public class CustomerService extends CrudService<Customer> {
         List<HashMap<Integer, Integer>> shoppingCart = customer.getShoppingCart();
         HashMap<Integer, Integer> latestCart = shoppingCart.get(shoppingCart.size() - 1);
 
-        if(latestCart.get(productId) - 1 > product.getQuantity()){
+        if(latestCart.get(productId) - 1 <= 0){
             return "database_error";
         } else {
             customer.getShoppingCart().get(shoppingCart.size() - 1).put(productId,latestCart.get(productId)-1);
@@ -139,6 +157,4 @@ public class CustomerService extends CrudService<Customer> {
             return "success";
         }
     }
-
-
 }
