@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
  
@@ -48,7 +49,7 @@ public class ProductController {
     }
 
     @GetMapping(value = "/filter/{query}", produces = "application/json")
-    public List<Product> getSecond10(@PathVariable String query) {
+    public JSONObject getSecond10(@PathVariable String query) {
         return productCrudService.getCustom(query);
     }
 }

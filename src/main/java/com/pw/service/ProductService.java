@@ -1,8 +1,10 @@
 package com.pw.service;
  
+
 import com.pw.model.Product;
 import com.pw.repository.ProductRepository;
 
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -75,8 +77,10 @@ public class ProductService extends CrudService<Product> {
         return productRepository.findAll();
     }
 
-    public List<Product> getCustom(String link) {
+    public JSONObject getCustom(String link) {
         String[] queries = link.split("&");
+
+        JSONObject resultWrapper = new JSONObject();
 
         List<Product> result = new ArrayList<Product>(productRepository.findAll());
 
@@ -146,7 +150,7 @@ public class ProductService extends CrudService<Product> {
                 if (Arrays.asList(price).contains(querySplit[1])) {
                     result = result.stream().sorted((p1, p2) -> p1.getPrice().compareTo(p2.getPrice())).collect(Collectors.toList());
 
-                    if (querySplit[1].equals("zdecreasingPriceToA")) {
+                    if (querySplit[1].equals("decreasingPrice")) {
                         Collections.reverse(result);
                     }
                 }
@@ -157,17 +161,33 @@ public class ProductService extends CrudService<Product> {
         if (pageNum*itemsPerPage > 0 && itemsPerPage < result.size()) {
             if (pageNum*itemsPerPage > result.size()) {
                 if ((pageNum - 1)*itemsPerPage < result.size()) {
-                    return result.subList( (pageNum - 1)*itemsPerPage, result.size());
+                    int totalSize = result.size();
+                    result = result.subList( (pageNum - 1)*itemsPerPage, result.size());
+                    resultWrapper.put("products", result);
+                    resultWrapper.put("totalPages", Math.ceil((float) totalSize / (float) itemsPerPage));
+                    resultWrapper.put("currentPage", pageNum);
+                    resultWrapper.put("itemsPerPage", itemsPerPage);
+                    return resultWrapper;
                 }
 
                 return null;
             }
             else {
-                System.out.println(result.subList((pageNum - 1)*itemsPerPage, pageNum*itemsPerPage).size());
-                return result.subList((pageNum - 1)*itemsPerPage, pageNum*itemsPerPage);
+                int totalSize = result.size();
+                result = result.subList((pageNum - 1)*itemsPerPage, pageNum*itemsPerPage);
+                resultWrapper.put("products", result);
+                resultWrapper.put("totalPages", Math.ceil((float) totalSize / (float) itemsPerPage));
+                resultWrapper.put("currentPage", pageNum);
+                resultWrapper.put("itemsPerPage", itemsPerPage);
+                return resultWrapper;
             }
         }
 
-        return result;
+        resultWrapper.put("products", result);
+        resultWrapper.put("totalPages", Math.ceil((float)result.size() / (float)itemsPerPage));
+        resultWrapper.put("currentPage", pageNum);
+        resultWrapper.put("itemsPerPage", itemsPerPage);
+
+        return resultWrapper;
     }
 }
