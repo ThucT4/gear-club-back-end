@@ -38,22 +38,22 @@ public class CustomerController {
         return "Done";
     }
 
-    @PutMapping(value = "/cart/", consumes = "application/json")
+    @PutMapping(value = "/cart/additem/", consumes = "application/json")
     public String addItem(@RequestBody Map<String, Integer> productForm) {
         return customerService.serviceAddToCart(productForm.get("customerID"), productForm.get("productID"), productForm.get("quantity"));
     }
 
-    @PutMapping(value = "/cart/", consumes = "application/json")
+    @PutMapping(value = "/cart/removeitem/", consumes = "application/json")
     public String removeItem(@RequestBody Map<String, Integer> productForm) {
         return customerService.serviceRemoveFromCart(productForm.get("customerID"), productForm.get("productID"));
     }
 
-    @PutMapping(value = "/cart/", consumes = "application/json")
+    @PutMapping(value = "/cart/increaseqty/", consumes = "application/json")
     public String increaseQuantity(@RequestBody Map<String, Integer> productForm) {
         return customerService.increaseQuantityCart(productForm.get("customerID"), productForm.get("productID"));
     }
 
-    @PutMapping(value = "/cart/", consumes = "application/json")
+    @PutMapping(value = "/cart/reduceqty/", consumes = "application/json")
     public String decreaseQuantity(@RequestBody Map<String, Integer> productForm) {
         return customerService.decreaseQuantityCart(productForm.get("customerID"), productForm.get("productID"));
     }
