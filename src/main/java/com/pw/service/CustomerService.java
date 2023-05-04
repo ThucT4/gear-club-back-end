@@ -53,6 +53,13 @@ public class CustomerService extends CrudService<Customer> {
         customerRepository.deleteById(id);
     }
 
+    public HashMap<Integer, Integer> retrieveLatestCart(int customerId) {
+        Customer customer = customerRepository.findById(customerId).orElseThrow(
+                () -> new EntityNotFoundException("Customer with id: " + customerId + " not found"));
+        List<HashMap<Integer, Integer>> shoppingCart = customer.getShoppingCart();
+        return customer.getShoppingCart().get(shoppingCart.size() - 1);
+    }
+
     public boolean isItemInCart(int customerId, int productId){
         Customer customer = customerRepository.findById(customerId).orElseThrow(
                 () -> new EntityNotFoundException("Customer with id: "+ customerId + " not found"));
@@ -77,7 +84,7 @@ public class CustomerService extends CrudService<Customer> {
     }
 
 
-    public String addToCart(int customerId, int productId, int quantity) {
+    public String serviceAddToCart(int customerId, int productId, int quantity) {
         Customer customer = customerRepository.findById(customerId).orElseThrow(
                 () -> new EntityNotFoundException("Customer with id: "+ customerId + " not found"));
         Product product = productCrudService.retrieve(productId);
@@ -92,9 +99,9 @@ public class CustomerService extends CrudService<Customer> {
         }
     }
 
-    public String removeFromCart(int customerId, int productId) {
+    public String serviceRemoveFromCart(int customerId, int productId) {
         if(!isItemInCart(customerId,productId)) {
-            return "database_error";
+            return "item_not_found";
         } else {
             removeItemFromCart(customerId,productId);
             return "success";
@@ -132,4 +139,6 @@ public class CustomerService extends CrudService<Customer> {
             return "success";
         }
     }
+
+
 }

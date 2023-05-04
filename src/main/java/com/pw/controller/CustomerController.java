@@ -2,6 +2,7 @@ package com.pw.controller;
 
 import com.pw.model.Customer;
 import com.pw.model.Product;
+import com.pw.model.ProductForm;
 import com.pw.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,5 +38,24 @@ public class CustomerController {
         return "Done";
     }
 
+    @PutMapping(value = "/cart/")
+    public String addItem(@RequestBody ProductForm productForm) {
+        return customerService.serviceAddToCart(productForm.getCustomerID(), productForm.getCustomerID(), productForm.getQuantity());
+    }
+
+    @PutMapping(value = "/cart/")
+    public String removeItem(@RequestBody ProductForm productForm) {
+        return customerService.serviceRemoveFromCart(productForm.getCustomerID(), productForm.getProductID());
+    }
+
+    @PutMapping(value = "/cart/")
+    public String increaseQuantity(@RequestBody ProductForm productForm) {
+        return customerService.increaseQuantityCart(productForm.getCustomerID(), productForm.getProductID());
+    }
+
+    @PutMapping(value = "/cart/")
+    public String decreaseQuantity(@RequestBody ProductForm productForm) {
+        return customerService.decreaseQuantityCart(productForm.getCustomerID(), productForm.getProductID());
+    }
 
 }
