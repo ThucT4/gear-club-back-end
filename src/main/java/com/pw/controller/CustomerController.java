@@ -40,39 +40,50 @@ public class CustomerController {
         return customerService.update(customer);
     }
 
-    @DeleteMapping(value = "/")
-    public String delete(int id) {
+    @DeleteMapping(value = "/{id}")
+    public String delete(@PathVariable int id) {
         customerService.delete(id);
         return "Done";
     }
 
-    @PutMapping(value = "/cart/additem/", consumes = "application/json")
-    public String addItem(@RequestBody Map<String, Integer> productForm) {
-        return customerService.serviceAddToCart(productForm.get("customerID"), productForm.get("productID"), productForm.get("quantity"));
+    @PutMapping(value = "/cart/add-item", consumes = "application/json")
+    public String addItem(@AuthenticationPrincipal Customer customer, @RequestBody Map<String, Integer> productForm) {
+        return customerService.serviceAddToCart(customer.getId(), productForm.get("productID"), productForm.get("quantity"));
     }
 
-    @PutMapping(value = "/cart/removeitem/", consumes = "application/json")
-    public String removeItem(@RequestBody Map<String, Integer> productForm) {
-        return customerService.serviceRemoveFromCart(productForm.get("customerID"), productForm.get("productID"));
+    @PutMapping(value = "/cart/remove-item", consumes = "application/json")
+    public String removeItem(@AuthenticationPrincipal Customer customer, @RequestBody Map<String, Integer> productForm) {
+        return customerService.serviceRemoveFromCart(customer.getId(), productForm.get("productID"));
     }
 
-    @PutMapping(value = "/cart/increaseqty/", consumes = "application/json")
-    public String increaseQuantity(@RequestBody Map<String, Integer> productForm) {
-        return customerService.increaseQuantityCart(productForm.get("customerID"), productForm.get("productID"));
+    @PutMapping(value = "/cart/increase-qty", consumes = "application/json")
+    public String increaseQuantity(@AuthenticationPrincipal Customer customer, @RequestBody Map<String, Integer> productForm) {
+        return customerService.increaseQuantityCart(customer.getId(), productForm.get("productID"));
     }
 
-    @PutMapping(value = "/cart/reduceqty/", consumes = "application/json")
-    public String decreaseQuantity(@RequestBody Map<String, Integer> productForm) {
-        return customerService.decreaseQuantityCart(productForm.get("customerID"), productForm.get("productID"));
+    @PutMapping(value = "/cart/reduce-qty", consumes = "application/json")
+    public String decreaseQuantity(@AuthenticationPrincipal Customer customer, @RequestBody Map<String, Integer> productForm) {
+        return customerService.decreaseQuantityCart(customer.getId(), productForm.get("productID"));
     }
 
-    @PutMapping(value = "/cart/payment/{id}", consumes = "application/json")
-    public String payment(@PathVariable int customerID) {
-        return customerService.payment(customerID);
+    @PutMapping(value = "/cart/payment", consumes = "application/json")
+    public String payment(@AuthenticationPrincipal Customer customer) {
+        return customerService.payment(customer.getId());
     }
 
-    @PutMapping(value = "/cart/findall/{id}", consumes = "application/json")
-    public List<HashMap<Integer, Integer>> retrieveAllCart(@PathVariable int customerID) {
-        return customerService.findAllCart(customerID);
+    @GetMapping(value = "/cart/find-all", consumes = "application/json")
+    public List<HashMap<Integer, Integer>> retrieveAllCart(@AuthenticationPrincipal Customer customer) {
+        return customerService.findAllCart(customer.getId());
     }
+
+//    @PutMapping(value = "/cart/accept-cart/{id}", consumes = "application/json")
+//    public String acceptCart(@PathVariable int id) {
+//        return customerService.findAllCart(customer.getId());
+//    }
+//
+//    @PutMapping(value = "/cart/decline-cart/{id}", consumes = "application/json")
+//    public String declineCart(@PathVariable int id) {
+//        return customerService.findAllCart(customer.getId());
+//    }
+
 }
