@@ -2,8 +2,10 @@ package com.pw.service;
  
 
 import com.pw.model.Product;
-import com.pw.repository.ProductRepository;
 
+
+import com.pw.repository.ProductRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,13 +13,10 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.ConcurrentModificationException;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import javax.persistence.EntityNotFoundException;
+
  
 @Service
 public class ProductService extends CrudService<Product> {

@@ -1,12 +1,9 @@
 package com.pw.controller;
  
 import com.pw.model.Product;
-import com.pw.service.CrudService;
 import com.pw.service.ProductService;
 import lombok.RequiredArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.json.simple.JSONObject;

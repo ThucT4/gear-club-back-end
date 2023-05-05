@@ -5,6 +5,7 @@ import com.pw.model.Product;
 import com.pw.repository.CollectionRepository;
 import com.pw.repository.ProductRepository;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +18,7 @@ import java.util.List;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import javax.persistence.EntityNotFoundException;
+
  
 @Service
 public class CollectionService extends CrudService<Collection> {
@@ -63,8 +64,5 @@ public class CollectionService extends CrudService<Collection> {
 
     public List<Collection> findAll() {
         return collectionRepository.findAll();
-        
     }
-
-    
 }

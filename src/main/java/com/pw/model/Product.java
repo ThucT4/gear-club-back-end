@@ -1,47 +1,42 @@
 package com.pw.model;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.Setter;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
- 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 @Entity
 @Table(name = "Products")
-@Getter @Setter @NoArgsConstructor
+@AllArgsConstructor
+@RequiredArgsConstructor
+@Data
 @EntityListeners(AuditingEntityListener.class)
 public class Product extends AbstractEntity {
     // Name of product
     @NotBlank
-    @Size(max = 150)
     @Column(name = "NAME")
+    @Size(min = 1, max = 150)
     private String name;
 
     // Array list of images
-    @Size(min = 1, max = 20)
     @Column(name = "IMAGES", length = 1024)
+    @Size(min = 1, max = 20)
     private ArrayList<String> images;
  
     // Name of vendor
     @NotBlank
-    @Size(min = 2, max = 50)
     @Column(name = "VENDORNAME")
+    @Size(min = 2, max = 50)
     private String vendorName;
 
     // Price
     @NonNull
-    // @Size(min = 4)
     @Column(name = "PRICE")
     private Long price;
 
@@ -70,7 +65,9 @@ public class Product extends AbstractEntity {
     private String description;
 
     // Array list of features
-    @Size(max = 20)
+//    @Column(name="VALUE")
+//    @Size(max = 20)
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "FEATURES")
     private HashMap<String, String> features;
 
@@ -80,10 +77,15 @@ public class Product extends AbstractEntity {
     private String category;
 
     // Highlights
+//    @Column(name = "HIGHLIGHTS")
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "HIGHLIGHTS")
     private HashMap<String, String> highlights;
 
     // Quantity
     @Column(name = "QUANTITY")
     private Integer quantity;
+
+    public Product() {
+    }
 }

@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.6.14</version>
+        <version>3.0.6</version>
         <relativePath/>
     </parent>
     <groupId>com.pw</groupId>
@@ -14,7 +14,7 @@
     <name>spring-boot-postgresql-jpa-crud-rest</name>
     <description>Spring Boot + PostgreSQL + JPA + Rest</description>
     <properties>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <springdoc-openapi-ui.version>1.5.13</springdoc-openapi-ui.version>
     </properties>
     <dependencies>
@@ -67,6 +67,31 @@
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
             <version>1.1.1</version>
+        </dependency>
+
+        <!-- JWT library -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>0.11.5</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>0.11.5</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>0.11.5</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Spring security -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
     </dependencies>
  

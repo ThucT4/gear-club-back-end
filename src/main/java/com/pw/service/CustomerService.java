@@ -3,15 +3,14 @@ package com.pw.service;
 import com.pw.model.Customer;
 import com.pw.model.Product;
 import com.pw.repository.CustomerRepository;
-import com.pw.repository.ProductRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 public class CustomerService extends CrudService<Customer> {
@@ -41,13 +40,14 @@ public class CustomerService extends CrudService<Customer> {
     public Customer update(Customer customerDetails) {
         Customer customer = customerRepository.findById(customerDetails.getId()).orElseThrow(
                 () -> new EntityNotFoundException("Customer with id: "+ customerDetails.getId() + " not found"));
-        customer.setUsername(customerDetails.getUsername());
-        customer.setPassword(customerDetails.getPassword());
-        customer.setName(customerDetails.getName());
+
         customer.setEmail(customerDetails.getEmail());
+        customer.setPassword(customerDetails.getPassword());
+        customer.setFirstName(customerDetails.getFirstName());
+        customer.setLastName(customerDetails.getLastName());
         customer.setPhone(customerDetails.getPhone());
         customer.setShippingAddress(customerDetails.getShippingAddress());
-        customer.setShoppingCart(customerDetails.getShoppingCart());
+//        customer.setShoppingCart(customerDetails.getShoppingCart());
         return customerRepository.save(customer);
     }
 
@@ -59,14 +59,16 @@ public class CustomerService extends CrudService<Customer> {
     public HashMap<Integer, Integer> retrieveLatestCart(int customerId) {
         Customer customer = customerRepository.findById(customerId).orElseThrow(
                 () -> new EntityNotFoundException("Customer with id: " + customerId + " not found"));
-        List<HashMap<Integer, Integer>> shoppingCart = customer.getShoppingCart();
-        return customer.getShoppingCart().get(shoppingCart.size() - 1);
+//        List<HashMap<Integer, Integer>> shoppingCart = customer.getShoppingCart();
+//        return customer.getShoppingCart().get(shoppingCart.size() - 1);
+        return null;
     }
 
     public List<HashMap<Integer, Integer>> findAllCart(int customerId) {
         Customer customer = customerRepository.findById(customerId).orElseThrow(
                 () -> new EntityNotFoundException("Customer with id: " + customerId + " not found"));
-        return customer.getShoppingCart();
+//        return customer.getShoppingCart();
+        return null;
     }
 
     public int getTotalPrice(HashMap<Integer, Integer> shoppingCart) {
@@ -81,23 +83,24 @@ public class CustomerService extends CrudService<Customer> {
     public boolean isItemInCart(int customerId, int productId){
         Customer customer = customerRepository.findById(customerId).orElseThrow(
                 () -> new EntityNotFoundException("Customer with id: "+ customerId + " not found"));
-        List<HashMap<Integer, Integer>> shoppingCart = customer.getShoppingCart();
-        return shoppingCart.get(shoppingCart.size() - 1).containsKey(productId);
+//        List<HashMap<Integer, Integer>> shoppingCart = customer.getShoppingCart();
+//        return shoppingCart.get(shoppingCart.size() - 1).containsKey(productId);
+        return true;
     }
 
     public void addItemToCart(int customerId, int productId, int quantity) {
         Customer customer = customerRepository.findById(customerId).orElseThrow(
                 () -> new EntityNotFoundException("Customer with id: "+ customerId + " not found"));
-        List<HashMap<Integer, Integer>> shoppingCart = customer.getShoppingCart();
-        customer.getShoppingCart().get(shoppingCart.size() - 1).put(productId,quantity);
+//        List<HashMap<Integer, Integer>> shoppingCart = customer.getShoppingCart();
+//        customer.getShoppingCart().get(shoppingCart.size() - 1).put(productId,quantity);
         update(customer);
     }
 
     public void removeItemFromCart(int customerId, int productId) {
         Customer customer = customerRepository.findById(customerId).orElseThrow(
                 () -> new EntityNotFoundException("Customer with id: "+ customerId + " not found"));
-        List<HashMap<Integer, Integer>> shoppingCart = customer.getShoppingCart();
-        customer.getShoppingCart().get(shoppingCart.size() - 1).remove(productId);
+//        List<HashMap<Integer, Integer>> shoppingCart = customer.getShoppingCart();
+//        customer.getShoppingCart().get(shoppingCart.size() - 1).remove(productId);
         update(customer);
     }
 
@@ -127,55 +130,58 @@ public class CustomerService extends CrudService<Customer> {
     }
 
     public String increaseQuantityCart(int customerId, int productId) {
-        Customer customer = customerRepository.findById(customerId).orElseThrow(
-                () -> new EntityNotFoundException("Customer with id: "+ customerId + " not found"));
-        Product product = productCrudService.retrieve(productId);
-        List<HashMap<Integer, Integer>> shoppingCart = customer.getShoppingCart();
-        HashMap<Integer, Integer> latestCart = shoppingCart.get(shoppingCart.size() - 1);
+//        Customer customer = customerRepository.findById(customerId).orElseThrow(
+//                () -> new EntityNotFoundException("Customer with id: "+ customerId + " not found"));
+//        Product product = productCrudService.retrieve(productId);
+//        List<HashMap<Integer, Integer>> shoppingCart = customer.getShoppingCart();
+//        HashMap<Integer, Integer> latestCart = shoppingCart.get(shoppingCart.size() - 1);
+//
+//        if(latestCart.get(productId) + 1 > product.getQuantity()){
+//            return "database_error";
+//        } else {
+//            customer.getShoppingCart().get(shoppingCart.size() - 1).put(productId,latestCart.get(productId)+1);
+//            update(customer);
+//            return "success";
+//        }
 
-        if(latestCart.get(productId) + 1 > product.getQuantity()){
-            return "database_error";
-        } else {
-            customer.getShoppingCart().get(shoppingCart.size() - 1).put(productId,latestCart.get(productId)+1);
-            update(customer);
-            return "success";
-        }
+        return "1";
     }
 
     public String decreaseQuantityCart(int customerId, int productId) {
-        Customer customer = customerRepository.findById(customerId).orElseThrow(
-                () -> new EntityNotFoundException("Customer with id: "+ customerId + " not found"));
-        Product product = productCrudService.retrieve(productId);
-        List<HashMap<Integer, Integer>> shoppingCart = customer.getShoppingCart();
-        HashMap<Integer, Integer> latestCart = shoppingCart.get(shoppingCart.size() - 1);
-
-        if(latestCart.get(productId) - 1 <= 0){
-            return "database_error";
-        } else {
-            customer.getShoppingCart().get(shoppingCart.size() - 1).put(productId,latestCart.get(productId)-1);
-            update(customer);
-            return "success";
-        }
+//        Customer customer = customerRepository.findById(customerId).orElseThrow(
+//                () -> new EntityNotFoundException("Customer with id: "+ customerId + " not found"));
+//        Product product = productCrudService.retrieve(productId);
+//        List<HashMap<Integer, Integer>> shoppingCart = customer.getShoppingCart();
+//        HashMap<Integer, Integer> latestCart = shoppingCart.get(shoppingCart.size() - 1);
+//
+//        if(latestCart.get(productId) - 1 <= 0){
+//            return "database_error";
+//        } else {
+//            customer.getShoppingCart().get(shoppingCart.size() - 1).put(productId,latestCart.get(productId)-1);
+//            update(customer);
+//            return "success";
+//        }
+        return null;
     }
 
     public String payment(int customerId) {
-        Customer customer = customerRepository.findById(customerId).orElseThrow(
-                () -> new EntityNotFoundException("Customer with id: "+ customerId + " not found"));
-        List<HashMap<Integer, Integer>> shoppingCart = customer.getShoppingCart();
-        HashMap<Integer, Integer> latestCart = shoppingCart.get(shoppingCart.size() - 1);
-
-        for(Map.Entry<Integer,Integer> cart : latestCart.entrySet()) {
-            Product product = productCrudService.retrieve(cart.getKey());
-            if(cart.getValue() > product.getQuantity()) {
-                return "not enough quantity: " + cart.getKey();
-            } else {
-                product.setQuantity(product.getQuantity() - cart.getValue());
-                productCrudService.update(product);
-            }
-        }
-        HashMap<Integer, Integer> newCart = new HashMap<>();
-        customer.getShoppingCart().add(newCart);
-        update(customer);
+//        Customer customer = customerRepository.findById(customerId).orElseThrow(
+//                () -> new EntityNotFoundException("Customer with id: "+ customerId + " not found"));
+//        List<HashMap<Integer, Integer>> shoppingCart = customer.getShoppingCart();
+//        HashMap<Integer, Integer> latestCart = shoppingCart.get(shoppingCart.size() - 1);
+//
+//        for(Map.Entry<Integer,Integer> cart : latestCart.entrySet()) {
+//            Product product = productCrudService.retrieve(cart.getKey());
+//            if(cart.getValue() > product.getQuantity()) {
+//                return "not enough quantity: " + cart.getKey();
+//            } else {
+//                product.setQuantity(product.getQuantity() - cart.getValue());
+//                productCrudService.update(product);
+//            }
+//        }
+//        HashMap<Integer, Integer> newCart = new HashMap<>();
+//        customer.getShoppingCart().add(newCart);
+//        update(customer);
         return "success";
     }
 }
