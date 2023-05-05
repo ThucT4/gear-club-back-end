@@ -157,4 +157,25 @@ public class CustomerService extends CrudService<Customer> {
             return "success";
         }
     }
+
+    public String payment(int customerId) {
+        Customer customer = customerRepository.findById(customerId).orElseThrow(
+                () -> new EntityNotFoundException("Customer with id: "+ customerId + " not found"));
+        List<HashMap<Integer, Integer>> shoppingCart = customer.getShoppingCart();
+        HashMap<Integer, Integer> latestCart = shoppingCart.get(shoppingCart.size() - 1);
+
+        for(Map.Entry<Integer,Integer> cart : latestCart.entrySet()) {
+            Product product = productCrudService.retrieve(cart.getKey());
+            if(cart.getValue() > product.getQuantity()) {
+                return "not enough quantity: " + cart.getKey();
+            } else {
+                product.setQuantity(product.getQuantity() - cart.getValue());
+                productCrudService.update(product);
+            }
+        }
+        HashMap<Integer, Integer> newCart = new HashMap<>();
+        customer.getShoppingCart().add(newCart);
+        update(customer);
+        return "success";
+    }
 }

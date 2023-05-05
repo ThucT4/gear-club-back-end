@@ -58,4 +58,8 @@ public class CustomerController {
         return customerService.decreaseQuantityCart(productForm.get("customerID"), productForm.get("productID"));
     }
 
+    @PutMapping(value = "/cart/payment/{id}", consumes = "application/json")
+    public String payment(@PathVariable int customerID) {
+        return customerService.payment(customerID);
+    }
 }
