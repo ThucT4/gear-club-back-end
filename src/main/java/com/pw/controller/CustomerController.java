@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -61,5 +63,10 @@ public class CustomerController {
     @PutMapping(value = "/cart/payment/{id}", consumes = "application/json")
     public String payment(@PathVariable int customerID) {
         return customerService.payment(customerID);
+    }
+
+    @PutMapping(value = "/cart/findall/{id}", consumes = "application/json")
+    public List<HashMap<Integer, Integer>> retrieveAllCart(@PathVariable int customerID) {
+        return customerService.findAllCart(customerID);
     }
 }
