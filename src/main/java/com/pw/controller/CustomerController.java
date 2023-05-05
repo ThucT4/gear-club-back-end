@@ -4,6 +4,7 @@ import com.pw.model.Customer;
 import com.pw.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -18,6 +19,11 @@ public class CustomerController {
 
     @Autowired
     private CustomerService customerService;
+
+    @GetMapping(value = "/personal-information")
+    public Customer getInformation(@AuthenticationPrincipal Customer customer) {
+        return customerService.retrieve(customer.getId());
+    }
 
     @PostMapping(value = "/", consumes = "application/json")
     public Customer create(@RequestBody Customer customer) {
