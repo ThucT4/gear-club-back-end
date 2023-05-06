@@ -1,12 +1,15 @@
 package com.pw.service;
  
 
+import com.pw.GearClubApplication;
 import com.pw.model.Product;
 
 
 import com.pw.repository.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.json.simple.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +23,8 @@ import java.util.stream.Collectors;
  
 @Service
 public class ProductService extends CrudService<Product> {
+
+    private static final Logger log = LoggerFactory.getLogger(GearClubApplication.class);
  
     @Autowired
     private ProductRepository productRepository;
