@@ -81,7 +81,7 @@ public class CustomerService extends CrudService<Customer> {
         int totalPrice = 0;
         for(Map.Entry<Integer,Integer> cart : shoppingCart.entrySet()) {
             if(cart.getKey() < 0) {
-                break;
+                continue;
             }
             Product product = productCrudService.retrieve(cart.getKey());
             totalPrice = totalPrice + (product.getPrice().intValue() * cart.getValue());
@@ -120,7 +120,7 @@ public class CustomerService extends CrudService<Customer> {
 
         if(isItemInCart(customerId,productId)) {
             return HttpResponse.builder().status("bad").message("duplicated").build();
-        } else if(quantity >= product.getQuantity()) {
+        } else if(quantity > product.getQuantity()) {
             return HttpResponse.builder().status("bad").message("database_error").build();
         } else {
 
