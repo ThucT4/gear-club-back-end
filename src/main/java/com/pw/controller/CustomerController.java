@@ -1,9 +1,11 @@
 package com.pw.controller;
 
 import com.pw.model.Customer;
+import com.pw.model.HttpResponse;
 import com.pw.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,29 +49,29 @@ public class CustomerController {
     }
 
     @PutMapping(value = "/cart/add-item", consumes = "application/json")
-    public String addItem(@AuthenticationPrincipal Customer customer, @RequestBody Map<String, Integer> productForm) {
-        return customerService.serviceAddToCart(customer.getId(), productForm.get("productID"), productForm.get("quantity"));
+    public HttpResponse addItem(@AuthenticationPrincipal Customer customer, @RequestBody Map<String, Integer> productForm) {
+        return customerService.serviceAddToCart(customer.getId(), productForm.get("productId"), productForm.get("quantity"));
     }
 
     @PutMapping(value = "/cart/remove-item", consumes = "application/json")
-    public String removeItem(@AuthenticationPrincipal Customer customer, @RequestBody Map<String, Integer> productForm) {
-        return customerService.serviceRemoveFromCart(customer.getId(), productForm.get("productID"));
+    public HttpResponse removeItem(@AuthenticationPrincipal Customer customer, @RequestBody Map<String, Integer> productForm) {
+        return customerService.serviceRemoveFromCart(customer.getId(), productForm.get("productId"));
     }
 
     @PutMapping(value = "/cart/increase-qty", consumes = "application/json")
-    public String increaseQuantity(@AuthenticationPrincipal Customer customer, @RequestBody Map<String, Integer> productForm) {
-        return customerService.increaseQuantityCart(customer.getId(), productForm.get("productID"));
+    public HttpResponse increaseQuantity(@AuthenticationPrincipal Customer customer, @RequestBody Map<String, Integer> productForm) {
+        return customerService.increaseQuantityCart(customer.getId(), productForm.get("productId"));
     }
 
     @PutMapping(value = "/cart/reduce-qty", consumes = "application/json")
-    public String decreaseQuantity(@AuthenticationPrincipal Customer customer, @RequestBody Map<String, Integer> productForm) {
-        return customerService.decreaseQuantityCart(customer.getId(), productForm.get("productID"));
+    public HttpResponse decreaseQuantity(@AuthenticationPrincipal Customer customer, @RequestBody Map<String, Integer> productForm) {
+        return customerService.decreaseQuantityCart(customer.getId(), productForm.get("productId"));
     }
 
-    @PutMapping(value = "/cart/payment", consumes = "application/json")
-    public String payment(@AuthenticationPrincipal Customer customer) {
-        return customerService.payment(customer.getId());
-    }
+//    @PutMapping(value = "/cart/payment", consumes = "application/json")
+//    public String payment(@AuthenticationPrincipal Customer customer) {
+//        return customerService.payment(customer.getId());
+//    }
 
     @GetMapping(value = "/cart/find-all", consumes = "application/json")
     public List<HashMap<Integer, Integer>> retrieveAllCart(@AuthenticationPrincipal Customer customer) {

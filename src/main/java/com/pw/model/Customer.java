@@ -1,20 +1,27 @@
 package com.pw.model;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pw.converter.ListOfHashMapConverter;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.Type;
 import org.hibernate.type.SqlTypes;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
+import java.io.IOException;
+import java.util.*;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
 
 @Entity
 @Table(name = "Customers")
@@ -23,6 +30,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @EntityListeners(AuditingEntityListener.class)
+@Slf4j
 public class Customer extends AbstractEntity implements UserDetails {
 
     //Customer email
@@ -64,9 +72,9 @@ public class Customer extends AbstractEntity implements UserDetails {
     private Role role;
 
     // Shopping cart
-    @JdbcTypeCode(SqlTypes.JSON)
+    @Convert(converter = ListOfHashMapConverter.class)
     @Column(name = "ShoppingCart")
-    private ArrayList<HashMap<Integer, Integer>> shoppingCart = new ArrayList<>();
+    private ArrayList<HashMap<Integer, Integer>> shoppingCart;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -102,4 +110,6 @@ public class Customer extends AbstractEntity implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+
 }

@@ -9,6 +9,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -26,6 +29,11 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationResponse register(RegisterRequest request) {
+        // Create new list of shopping cart have a shopping cart inside
+        ArrayList<HashMap<Integer, Integer>> listOfShoppingCart = new ArrayList<>();
+        HashMap<Integer, Integer> firstShoppingCart = new HashMap<>();
+        listOfShoppingCart.add(firstShoppingCart);
+
         // Create new user from request information
         Customer customer = Customer.builder()
                 .email(request.getEmail())
@@ -35,6 +43,7 @@ public class AuthenticationService {
                 .phone(request.getPhone())
                 .shippingAddress(request.getShippingAddress())
                 .role(Role.USER)
+                .shoppingCart(listOfShoppingCart)
                 .build();
         customerRepository.save(customer);
 
