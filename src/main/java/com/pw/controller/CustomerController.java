@@ -4,6 +4,7 @@ import com.pw.model.Customer;
 import com.pw.model.HttpResponse;
 import com.pw.service.CustomerService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,6 +18,7 @@ import java.util.Map;
 @RequestMapping("api/customer")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*", allowedHeaders = "*")
+@Slf4j
 public class CustomerController {
 
     @Autowired
@@ -40,6 +42,11 @@ public class CustomerController {
     @PutMapping(value = "/", consumes = "application/json")
     public Customer update(@RequestBody Customer customer) {
         return customerService.update(customer);
+    }
+
+    @PutMapping(value = "/update-personal-information")
+    public Customer updateCustomerInformation(@AuthenticationPrincipal Customer authenticatedCustomer, @RequestBody Customer customerFromClient) {
+        return customerService.updateCustomerInformation(authenticatedCustomer.getId(), customerFromClient);
     }
 
     @DeleteMapping(value = "/{id}")

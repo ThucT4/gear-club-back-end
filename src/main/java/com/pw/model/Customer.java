@@ -48,12 +48,12 @@ public class Customer extends AbstractEntity implements UserDetails {
     private String password;
 
     @NotBlank
-    @Size(max = 20)
+    @Size(max = 100)
     @Column(name = "FIRSTNAME")
     private String firstName;
 
     @NotBlank
-    @Size(max = 20)
+    @Size(max = 100)
     @Column(name = "LASTNAME")
     private String lastName;
 

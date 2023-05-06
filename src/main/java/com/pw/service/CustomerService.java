@@ -219,18 +219,32 @@ public class CustomerService extends CrudService<Customer> {
 
         // Set payment time + status + total price of this cart
         Long unixTime = Instant.now().getEpochSecond();
-        latestCart.put(-1, 2); // Status change from 1 -> 2
-        latestCart.put(-2, unixTime.intValue()); // Set payment time
-        latestCart.put(-3, getTotalPrice(latestCart)); // Set total price
+        latestCart.put(-2, 2); // Status change from 1 -> 2
+        latestCart.put(-3, unixTime.intValue()); // Set payment time
+        latestCart.put(-4, getTotalPrice(latestCart)); // Set total price
 
         // Create new cart
         HashMap<Integer, Integer> newCart = new HashMap<>();
-        newCart.put(-1, 1); // Set status for new cart
+        newCart.put(-1, shoppingCart.size()); // Index of the new cart in cart list
+        newCart.put(-2, 1); // Set status for new cart
 
         shoppingCart.add(newCart);
         customer.setShoppingCart(shoppingCart);
         customerRepository.save(customer);
 
         return HttpResponse.builder().status("ok").message("success").build();
+    }
+
+    public Customer updateCustomerInformation(Integer customerId, Customer customerFromClient) {
+        Customer customerDB = customerRepository.findById(customerId).orElseThrow(() -> {throw new EntityNotFoundException("User not found");});
+
+        customerDB.setFirstName(customerFromClient.getFirstName());
+        customerDB.setLastName(customerFromClient.getLastName());
+        customerDB.setPhone(customerFromClient.getPhone());
+        customerDB.setShippingAddress(customerFromClient.getShippingAddress());
+
+        customerRepository.save(customerDB);
+
+        return customerDB;
     }
 }
