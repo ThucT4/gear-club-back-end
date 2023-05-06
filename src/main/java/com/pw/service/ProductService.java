@@ -7,6 +7,7 @@ import com.pw.model.Product;
 
 import com.pw.repository.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

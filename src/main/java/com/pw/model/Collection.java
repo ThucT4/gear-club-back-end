@@ -1,5 +1,6 @@
 package com.pw.model;
 
+import com.pw.converter.HashMapConverterIntegerString;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -24,10 +25,7 @@ public class Collection extends AbstractEntity {
     private String name;
 
     // Array of product's ID
-//    @ElementCollection
-//    @NotNull
-//    @Column(name = "PRODUCTLIST")
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "PRODUCTLIST")
+    @Convert(converter = HashMapConverterIntegerString.class)
+    @Column(name = "PRODUCTLIST", length = 1024 * 10)
     private HashMap<Integer, String> productList;
 }

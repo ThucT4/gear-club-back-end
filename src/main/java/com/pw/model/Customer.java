@@ -73,7 +73,7 @@ public class Customer extends AbstractEntity implements UserDetails {
 
     // Shopping cart
     @Convert(converter = ListOfHashMapConverter.class)
-    @Column(name = "ShoppingCart")
+    @Column(name = "ShoppingCart", length = 1024 * 10)
     private ArrayList<HashMap<Integer, Integer>> shoppingCart;
 
     @Override

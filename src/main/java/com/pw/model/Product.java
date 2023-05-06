@@ -1,5 +1,6 @@
 package com.pw.model;
 
+import com.pw.converter.HashMapConverter;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -65,10 +66,8 @@ public class Product extends AbstractEntity {
     private String description;
 
     // Array list of features
-//    @Column(name="VALUE")
-//    @Size(max = 20)
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "FEATURES")
+    @Convert(converter =  HashMapConverter.class)
+    @Column(name = "FEATURES", length = 1024 * 10)
     private HashMap<String, String> features;
 
     // Category
@@ -77,9 +76,8 @@ public class Product extends AbstractEntity {
     private String category;
 
     // Highlights
-//    @Column(name = "HIGHLIGHTS")
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "HIGHLIGHTS")
+    @Convert(converter =  HashMapConverter.class)
+    @Column(name = "HIGHLIGHTS", length = 1024 * 10)
     private HashMap<String, String> highlights;
 
     // Quantity
