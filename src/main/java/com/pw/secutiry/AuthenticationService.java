@@ -32,6 +32,7 @@ public class AuthenticationService {
         // Create new list of shopping cart have a shopping cart inside
         ArrayList<HashMap<Integer, Integer>> listOfShoppingCart = new ArrayList<>();
         HashMap<Integer, Integer> firstShoppingCart = new HashMap<>();
+        firstShoppingCart.put(-1, 1);
         listOfShoppingCart.add(firstShoppingCart);
 
         // Create new user from request information

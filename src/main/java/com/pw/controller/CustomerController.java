@@ -68,10 +68,10 @@ public class CustomerController {
         return customerService.decreaseQuantityCart(customer.getId(), productForm.get("productId"));
     }
 
-//    @PutMapping(value = "/cart/payment", consumes = "application/json")
-//    public String payment(@AuthenticationPrincipal Customer customer) {
-//        return customerService.payment(customer.getId());
-//    }
+    @PutMapping(value = "/cart/payment")
+    public HttpResponse payment(@AuthenticationPrincipal Customer customer) {
+        return customerService.payment(customer.getId());
+    }
 
     @GetMapping(value = "/cart/find-all", consumes = "application/json")
     public List<HashMap<Integer, Integer>> retrieveAllCart(@AuthenticationPrincipal Customer customer) {

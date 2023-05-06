@@ -123,7 +123,6 @@ public class CustomerService extends CrudService<Customer> {
         } else if(quantity >= product.getQuantity()) {
             return HttpResponse.builder().status("bad").message("database_error").build();
         } else {
-//            addItemToCart(customerId,productId,quantity);
 
             ArrayList<HashMap<Integer, Integer>> cartList = (ArrayList<HashMap<Integer, Integer>>) customer.getShoppingCart().clone();
             HashMap<Integer, Integer> currentCart = cartList.get(cartList.size() - 1);
@@ -143,7 +142,6 @@ public class CustomerService extends CrudService<Customer> {
         if(!isItemInCart(customerId,productId)) {
             return HttpResponse.builder().status("bad").message("item_not_found").build();
         } else {
-//            removeItemFromCart(customerId,productId);
 
             ArrayList<HashMap<Integer, Integer>> cartList = (ArrayList<HashMap<Integer, Integer>>) customer.getShoppingCart().clone();
             HashMap<Integer, Integer> currentCart = cartList.get(cartList.size() - 1);
@@ -165,8 +163,6 @@ public class CustomerService extends CrudService<Customer> {
         if(latestCart.get(productId) + 1 > product.getQuantity()){
             return HttpResponse.builder().status("bad").message("database_error").build();
         } else {
-//            customer.getShoppingCart().get(shoppingCart.size() - 1).put(productId,latestCart.get(productId)+1);
-//            update(customer);
 
             ArrayList<HashMap<Integer, Integer>> cartList = (ArrayList<HashMap<Integer, Integer>>) customer.getShoppingCart().clone();
             HashMap<Integer, Integer> currentCart = cartList.get(cartList.size() - 1);
@@ -188,8 +184,6 @@ public class CustomerService extends CrudService<Customer> {
         if(latestCart.get(productId) - 1 <= 0){
             return HttpResponse.builder().status("bad").message("database_error").build();
         } else {
-//            customer.getShoppingCart().get(shoppingCart.size() - 1).put(productId,latestCart.get(productId)-1);
-//            update(customer);
 
             ArrayList<HashMap<Integer, Integer>> cartList = (ArrayList<HashMap<Integer, Integer>>) customer.getShoppingCart().clone();
             HashMap<Integer, Integer> currentCart = cartList.get(cartList.size() - 1);
@@ -201,22 +195,42 @@ public class CustomerService extends CrudService<Customer> {
         }
     }
 
-//        for(Map.Entry<Integer,Integer> cart : latestCart.entrySet()) {
-//            Product product = productCrudService.retrieve(cart.getKey());
-//            if(cart.getValue() > product.getQuantity()) {
-//                return "not enough quantity: " + cart.getKey();
-//            } else {
-//                product.setQuantity(product.getQuantity() - cart.getValue());
-//                productCrudService.update(product);
-//            }
-//        }
-//        Long unixTime = Instant.now().getEpochSecond();
-//        latestCart.put(-1, 2);
-//        latestCart.put(-2, unixTime.intValue());
-//        latestCart.put(-3, getTotalPrice(latestCart));
-//        HashMap<Integer, Integer> newCart = new HashMap<>();
-//        customer.getShoppingCart().add(newCart);
-//        update(customer);
-//        return "success";
-//    }
+    public HttpResponse payment(int customerId) {
+        // Get current
+        Customer customer = customerRepository.findById(customerId).orElseThrow(
+                () -> new EntityNotFoundException("Customer with id: "+ customerId + " not found"));
+        ArrayList<HashMap<Integer, Integer>> shoppingCart = (ArrayList<HashMap<Integer, Integer>>) customer.getShoppingCart().clone();
+        HashMap<Integer, Integer> latestCart = shoppingCart.get(shoppingCart.size() - 1);
+
+        // Decrease quantity of products inside cart
+        for(Map.Entry<Integer,Integer> cart : latestCart.entrySet()) {
+            if (cart.getKey() < 0) { // Skip -1, -2, -3
+                continue;
+            }
+
+            Product product = productCrudService.retrieve(cart.getKey());
+            if(cart.getValue() > product.getQuantity()) {
+                return HttpResponse.builder().status("bad").message("not enough quantity: " + cart.getKey()).build();
+            } else {
+                product.setQuantity(product.getQuantity() - cart.getValue());
+                productCrudService.update(product);
+            }
+        }
+
+        // Set payment time + status + total price of this cart
+        Long unixTime = Instant.now().getEpochSecond();
+        latestCart.put(-1, 2); // Status change from 1 -> 2
+        latestCart.put(-2, unixTime.intValue()); // Set payment time
+        latestCart.put(-3, getTotalPrice(latestCart)); // Set total price
+
+        // Create new cart
+        HashMap<Integer, Integer> newCart = new HashMap<>();
+        newCart.put(-1, 1); // Set status for new cart
+
+        shoppingCart.add(newCart);
+        customer.setShoppingCart(shoppingCart);
+        customerRepository.save(customer);
+
+        return HttpResponse.builder().status("ok").message("success").build();
+    }
 }
