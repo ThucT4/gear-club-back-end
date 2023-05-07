@@ -214,12 +214,9 @@ public class ProductService extends CrudService<Product> {
                     continue;
                 } else  {
                     if (product.getName().toLowerCase().contains(word) ||
-                    product.getDescription().toLowerCase().contains(word) ||
                     product.getCategory().toLowerCase().contains(word) ||
                     product.getVendorName().toLowerCase().contains(word) ||
-                    product.getDesignLocation().toLowerCase().contains(word) ||
-                    product.getTitle().toLowerCase().contains(word) ||
-                    product.getIntro().toLowerCase().contains(word)) {
+                    product.getDesignLocation().toLowerCase().contains(word)) {
                         result.add(product);
                     }
                 }
