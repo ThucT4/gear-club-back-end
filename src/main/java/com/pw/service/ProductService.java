@@ -13,11 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -194,5 +192,40 @@ public class ProductService extends CrudService<Product> {
         resultWrapper.put("itemsPerPage", itemsPerPage);
 
         return resultWrapper;
+    }
+
+    public List<Product> searchByString(Map<String, String> searchRequest) {
+        String searchString = searchRequest.get("search");
+        List<Product> products = productRepository.findAll();
+
+        // If search string is empty => Return all product
+        if (searchString.isEmpty()) {
+            return products;
+        }
+
+        // Split string into words first
+        String[] words = searchString.toLowerCase().split("\\P{L}+");
+
+        // Filter
+        List<Product> result = new ArrayList<>();
+        for (Product product : products) {
+            for (String word : words) {
+                if (word.isEmpty()) {
+                    continue;
+                } else  {
+                    if (product.getName().toLowerCase().contains(word) ||
+                    product.getDescription().toLowerCase().contains(word) ||
+                    product.getCategory().toLowerCase().contains(word) ||
+                    product.getVendorName().toLowerCase().contains(word) ||
+                    product.getDesignLocation().toLowerCase().contains(word) ||
+                    product.getTitle().toLowerCase().contains(word) ||
+                    product.getIntro().toLowerCase().contains(word)) {
+                        result.add(product);
+                    }
+                }
+            }
+        }
+
+        return result;
     }
 }

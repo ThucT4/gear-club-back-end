@@ -5,6 +5,7 @@ import com.pw.service.ProductService;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.Map;
 
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
@@ -20,6 +21,11 @@ public class ProductController {
  
     @Autowired
     private ProductService productCrudService;
+
+    @GetMapping(value = "/search-by-string")
+    public List<Product> searchByString(@RequestBody Map<String, String> searchRequest) {
+        return productCrudService.searchByString(searchRequest);
+    }
  
     @PostMapping(value = "/", consumes = "application/json")
     public Product create(@RequestBody Product product) {
