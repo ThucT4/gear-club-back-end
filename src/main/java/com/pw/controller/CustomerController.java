@@ -10,6 +10,7 @@ import com.stripe.param.PaymentIntentCreateParams;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +25,9 @@ import java.util.Map;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Slf4j
 public class CustomerController {
+
+    @Value("${stripe.public.key}")
+    private String stripePublicKey;
 
     @Autowired
     private CustomerService customerService;
