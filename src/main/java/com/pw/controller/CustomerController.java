@@ -3,9 +3,14 @@ package com.pw.controller;
 import com.pw.model.Customer;
 import com.pw.model.HttpResponse;
 import com.pw.service.CustomerService;
+import com.stripe.Stripe;
+import com.stripe.exception.StripeException;
+import com.stripe.model.PaymentIntent;
+import com.stripe.param.PaymentIntentCreateParams;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +25,9 @@ import java.util.Map;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Slf4j
 public class CustomerController {
+
+    @Value("${stripe.public.key}")
+    private String stripePublicKey;
 
     @Autowired
     private CustomerService customerService;
@@ -83,6 +91,16 @@ public class CustomerController {
     @GetMapping(value = "/cart/find-all", consumes = "application/json")
     public List<HashMap<Integer, Integer>> retrieveAllCart(@AuthenticationPrincipal Customer customer) {
         return customerService.findAllCart(customer.getId());
+    }
+
+    @PostMapping(value = "/cart/create-payment")
+    public String createPayment(@AuthenticationPrincipal Customer customer) throws StripeException {
+        PaymentIntentCreateParams createParams = new PaymentIntentCreateParams.Builder()
+                .setCurrency("VND")
+                .setAmount((long) customerService.getTotalPrice(customerService.retrieveLatestCart(customer.getId())))
+                .build();
+        PaymentIntent paymentIntent = PaymentIntent.create(createParams);
+        return paymentIntent.getClientSecret();
     }
 
 //    @PutMapping(value = "/cart/accept-cart/{id}", consumes = "application/json")
