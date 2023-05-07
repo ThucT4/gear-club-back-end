@@ -22,7 +22,7 @@ public class ProductController {
     @Autowired
     private ProductService productCrudService;
 
-    @GetMapping(value = "/search-by-string")
+    @PutMapping(value = "/search-by-string")
     public List<Product> searchByString(@RequestBody Map<String, String> searchRequest) {
         return productCrudService.searchByString(searchRequest);
     }
