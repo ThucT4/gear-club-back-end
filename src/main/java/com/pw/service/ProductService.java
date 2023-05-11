@@ -204,7 +204,10 @@ public class ProductService extends CrudService<Product> {
         }
 
         // Split string into words first
-        String[] words = searchString.toLowerCase().split("\\P{L}+");
+        String[] words = searchString.toLowerCase().split(" ");
+        for (int i = 0; i < words.length; i++) {
+            words[i] = words[i].trim();
+        }
 
         // Filter
         List<Product> result = new ArrayList<>();

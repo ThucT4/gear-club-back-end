@@ -4,6 +4,7 @@ import com.pw.model.Customer;
 import com.pw.model.HttpResponse;
 import com.pw.model.Product;
 import com.pw.repository.CustomerRepository;
+import com.pw.repository.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +14,7 @@ import org.springframework.stereotype.Service;
 
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -24,6 +22,10 @@ public class CustomerService extends CrudService<Customer> {
 
     @Autowired
     private CustomerRepository customerRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
+
     @Autowired
     private ProductService productCrudService;
 

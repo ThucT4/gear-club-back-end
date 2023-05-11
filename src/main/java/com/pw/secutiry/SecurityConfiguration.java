@@ -1,5 +1,6 @@
 package com.pw.secutiry;
 
+import com.pw.model.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +20,11 @@ public class SecurityConfiguration {
     private final String[] WHITE_LIST_ENDPOINTS = {
             /*"/api/product/**",*/
             "/**"
+    };
+
+    private final String[] ADMIN_ENDPOINTS = {
+            /*"/api/product/**",*/
+            "/api/admin"
     };
 
     @Autowired

@@ -102,15 +102,4 @@ public class CustomerController {
         PaymentIntent paymentIntent = PaymentIntent.create(createParams);
         return paymentIntent.getClientSecret();
     }
-
-//    @PutMapping(value = "/cart/accept-cart/{id}", consumes = "application/json")
-//    public String acceptCart(@PathVariable int id) {
-//        return customerService.findAllCart(customer.getId());
-//    }
-//
-//    @PutMapping(value = "/cart/decline-cart/{id}", consumes = "application/json")
-//    public String declineCart(@PathVariable int id) {
-//        return customerService.findAllCart(customer.getId());
-//    }
-
 }
