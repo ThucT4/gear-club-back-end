@@ -80,4 +80,32 @@ public class AuthenticationService {
                 .token(jwtToken)
                 .build();
     }
+
+    public AuthenticationResponse authenticateAdmin(AuthenticationRequest request) {
+        // User authenticationManager to authenticate user with password and username
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()
+                )
+        );
+
+        // If the program go to this point meaning the user is inside the database, and authenticated
+        // Get user from database to generate token then send back
+        Customer customer = customerRepository.findByEmail(request.getEmail())
+                .orElseThrow();
+
+        // Check if the user is an ADMIN, otherwise return null
+        if (customer.getRole() != Role.ADMIN) {
+            return null;
+        }
+
+        // Create new token from user's detail
+        String jwtToken = jwtService.generateToken(customer);
+
+        // Send back token
+        return AuthenticationResponse.builder()
+                .token(jwtToken)
+                .build();
+    }
 }
