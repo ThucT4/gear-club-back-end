@@ -26,9 +26,6 @@ import java.util.Map;
 @Slf4j
 public class CustomerController {
 
-    @Value("${stripe.public.key}")
-    private String stripePublicKey;
-
     @Autowired
     private CustomerService customerService;
 
@@ -93,11 +90,21 @@ public class CustomerController {
         return customerService.findAllCart(customer.getId());
     }
 
-    @PostMapping(value = "/cart/create-payment")
-    public String createPayment(@AuthenticationPrincipal Customer customer) throws StripeException {
+//    @PostMapping(value = "/cart/create-payment")
+//    public String createPayment(@AuthenticationPrincipal Customer customer) throws StripeException {
+//        PaymentIntentCreateParams createParams = new PaymentIntentCreateParams.Builder()
+//                .setCurrency("VND")
+//                .setAmount((long) customerService.getTotalPrice(customerService.retrieveLatestCart(customer.getId())))
+//                .build();
+//        PaymentIntent paymentIntent = PaymentIntent.create(createParams);
+//        return paymentIntent.getClientSecret();
+//    }
+
+    @PostMapping(value = "/cart/create-payment-intent")
+    public String createPayment() throws StripeException {
         PaymentIntentCreateParams createParams = new PaymentIntentCreateParams.Builder()
                 .setCurrency("VND")
-                .setAmount((long) customerService.getTotalPrice(customerService.retrieveLatestCart(customer.getId())))
+                .setAmount((long) 150000)
                 .build();
         PaymentIntent paymentIntent = PaymentIntent.create(createParams);
         return paymentIntent.getClientSecret();

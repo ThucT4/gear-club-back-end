@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import com.stripe.Stripe;
+import jakarta.annotation.PostConstruct;
 import org.jsoup.*;
 import org.jsoup.nodes.*;
 import org.jsoup.select.*;
@@ -43,6 +45,11 @@ public class GearClubApplication implements CommandLineRunner {
 
 	@Autowired
 	private CollectionRepository collectionRepository;
+
+	@PostConstruct
+	public void setup() {
+		Stripe.apiKey = "sk_test_51N4oJiCbKVGQp2atAYtLwLpYsxRWiTwcxzHML9TmoRtI97qsjdqp6xPDRzmmGg8EbsYGtodnqzkRgwnbFy8OqTC700HEJVgQfC";
+	}
 
 	public static void main(String[] args) throws IOException {
 		SpringApplication.run(GearClubApplication.class, args);
