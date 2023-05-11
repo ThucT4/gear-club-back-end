@@ -38,6 +38,7 @@ public class SecurityConfiguration {
             "/api/product/", // POST
             "/api/product/", // PUT
             "/api/product/{id}", // DELETE
+            "/api/collection/", // PUT
     };
 
     @Autowired
@@ -69,6 +70,8 @@ public class SecurityConfiguration {
                 .permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/product/all")
                 .permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/product/filter/{query}")
+                .permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/collection/all")
                 .permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/collection/{name}")
@@ -83,6 +86,8 @@ public class SecurityConfiguration {
                 .requestMatchers(HttpMethod.PUT, "/api/product/")
                 .hasAuthority("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/product/{id}")
+                .hasAuthority("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/collection/")
                 .hasAuthority("ADMIN")
 
 
