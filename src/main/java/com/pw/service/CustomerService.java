@@ -299,4 +299,51 @@ public class CustomerService extends CrudService<Customer> {
 
         return ResponseEntity.status(HttpStatus.OK).body(resBody);
     }
+
+    public ResponseEntity<HashMap<Object, Object>> getCurrentCart(Customer customerPrinciple) {
+        Customer customer = customerRepository.findById(customerPrinciple.getId()).orElseThrow();
+        HashMap<Object, Object> resCart = new HashMap<>();
+
+        HashMap<Integer, Integer> curCart = customer.getShoppingCart().get(customer.getShoppingCart().size() - 1);
+        ArrayList<HashMap<String, Object>> productList = new ArrayList<>();
+        resCart.put("customerId", customer.getId());
+        resCart.put("customerFirstName", customer.getFirstName());
+        resCart.put("customerLastName", customer.getLastName());
+        resCart.put("customerPhone", customer.getPhone());
+        resCart.put("customerEmail", customer.getEmail());
+        resCart.put("productList", productList);
+
+        for (Map.Entry<Integer, Integer> entry : curCart.entrySet()) {
+            int key = entry.getKey();
+            int value = entry.getValue();
+
+            if (key == -1) {
+                resCart.put("cartPosition", value);
+            } else if (key == -2) {
+                resCart.put("cartStatus", value);
+            } else if (key == -3) {
+                resCart.put("cartPaymentTime", value);
+            } else if (key == -4) {
+                resCart.put("cartTotalPrice", value);
+            } else {
+                Optional<Product> curOptionalProduct = productRepository.findById(key);
+
+                if (curOptionalProduct.isPresent()) {
+                    Product curProduct = curOptionalProduct.get();
+
+                    HashMap<String, Object> resProduct = new HashMap<String, Object>();
+                    resProduct.put("id", curProduct.getId());
+                    resProduct.put("name", curProduct.getName());
+                    resProduct.put("price", curProduct.getPrice());
+                    resProduct.put("images", curProduct.getImages());
+                    resProduct.put("paymentQuantity", value);
+                    resProduct.put("quantity", curProduct.getQuantity()); // Total quantity
+
+                    productList.add(resProduct);
+                }
+            }
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(resCart);
+    }
 }

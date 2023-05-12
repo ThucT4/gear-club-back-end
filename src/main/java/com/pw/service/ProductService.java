@@ -77,7 +77,16 @@ public class ProductService extends CrudService<Product> {
     }
 
     public List<Product> findAll() {
-        return productRepository.findAll();
+        List<Product> productList = productRepository.findAll();
+        List<Product> res = new ArrayList<>();
+
+        for (Product product : productList) {
+            if (product.getDeleted()) continue;
+
+            res.add(product);
+        }
+
+        return res;
     }
 
     public JSONObject getCustom(String link) {
@@ -85,7 +94,13 @@ public class ProductService extends CrudService<Product> {
 
         JSONObject resultWrapper = new JSONObject();
 
-        List<Product> result = new ArrayList<Product>(productRepository.findAll());
+        List<Product> temp = productRepository.findAll();
+        List<Product> result = new ArrayList<>();
+        for (Product product : temp) {
+            if (product.getDeleted()) continue;
+
+            result.add(product);
+        }
 
         int pageNum = 0, itemsPerPage = 0;
 
@@ -212,6 +227,8 @@ public class ProductService extends CrudService<Product> {
         // Filter
         List<Product> result = new ArrayList<>();
         for (Product product : products) {
+            if (product.getDeleted()) continue;
+
             for (String word : words) {
                 if (word.isEmpty()) {
                     continue;
@@ -227,5 +244,34 @@ public class ProductService extends CrudService<Product> {
         }
 
         return result;
+    }
+
+    public Product softDelete(int id) {
+        Product productDB = productRepository.findById(id).orElseThrow();
+
+        productDB.setDeleted(true);
+
+        return productRepository.save(productDB);
+    }
+
+    public List<Product> getDeletedProduct() {
+        List<Product> productList = productRepository.findAll();
+        List<Product> res = new ArrayList<>();
+
+        for (Product product : productList) {
+            if (product.getDeleted()) {
+                res.add(product);
+            }
+        }
+
+        return res;
+    }
+
+    public Product recoverProduct(int productId) {
+        Product productDB = productRepository.findById(productId).orElseThrow();
+
+        productDB.setDeleted(false);
+
+        return productRepository.save(productDB);
     }
 }

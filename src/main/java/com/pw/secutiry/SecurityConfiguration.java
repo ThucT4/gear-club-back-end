@@ -37,7 +37,9 @@ public class SecurityConfiguration {
             "/api/admin/**",
             "/api/product/", // POST
             "/api/product/", // PUT
-            "/api/product/{id}", // DELETE
+            "/api/product/deleted", // GET
+            "/api/product/recover/{id}", // PUT
+            "/api/admin/soft-delete/{id}", // DELETE
             "/api/collection/", // PUT
             "/api/admin/all-customers", // GET
             "/api/admin/update-customer", // PUT
@@ -87,7 +89,11 @@ public class SecurityConfiguration {
                 .hasAuthority("ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/product/")
                 .hasAuthority("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/api/product/{id}")
+                .requestMatchers(HttpMethod.GET, "/api/product/deleted")
+                .hasAuthority("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/product/recover/{id}")
+                .hasAuthority("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/admin/soft-delete/{id}")
                 .hasAuthority("ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/collection/")
                 .hasAuthority("ADMIN")
@@ -95,7 +101,6 @@ public class SecurityConfiguration {
                 .hasAuthority("ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/admin/update-customer")
                 .hasAuthority("ADMIN")
-
 
 
 

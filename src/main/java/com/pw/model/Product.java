@@ -7,6 +7,8 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.ArrayList;
@@ -83,6 +85,10 @@ public class Product extends AbstractEntity {
     // Quantity
     @Column(name = "QUANTITY")
     private Integer quantity;
+
+    @Column(name = "DELETED")
+    @Value("${props.boolean.deleted:#{false}}")
+    private Boolean deleted = false;
 
     public Product() {
     }

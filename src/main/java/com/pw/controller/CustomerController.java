@@ -46,6 +46,11 @@ public class CustomerController {
         return customerService.getAllPurchasedCarts(customer);
     }
 
+    @GetMapping(value = "/cart/current", produces = "application/json")
+    public ResponseEntity<HashMap<Object, Object>> getCurrentCart(@AuthenticationPrincipal Customer customer) {
+        return customerService.getCurrentCart(customer);
+    }
+
     @PutMapping(value = "/cart/add-item", consumes = "application/json")
     public HttpResponse addItem(@AuthenticationPrincipal Customer customer, @RequestBody Map<String, Integer> productForm) {
         return customerService.serviceAddToCart(customer.getId(), productForm.get("productId"), productForm.get("quantity"));
