@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,6 +39,11 @@ public class CustomerController {
     @PutMapping(value = "/update-personal-information")
     public Customer updateCustomerInformation(@AuthenticationPrincipal Customer authenticatedCustomer, @RequestBody Customer customerFromClient) {
         return customerService.updateCustomerInformation(authenticatedCustomer.getId(), customerFromClient);
+    }
+
+    @GetMapping(value = "/purchased-carts/all", produces = "application/json")
+    public ResponseEntity<List<HashMap<Object, Object>>> getAllPurchasedCarts(@AuthenticationPrincipal Customer customer) {
+        return customerService.getAllPurchasedCarts(customer);
     }
 
     @PutMapping(value = "/cart/add-item", consumes = "application/json")

@@ -9,6 +9,8 @@ import com.pw.repository.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -246,5 +248,55 @@ public class CustomerService extends CrudService<Customer> {
         customerRepository.save(customerDB);
 
         return customerDB;
+    }
+
+    public ResponseEntity<List<HashMap<Object, Object>>> getAllPurchasedCarts(Customer customerPrinciple) {
+        Customer customer = customerRepository.findById(customerPrinciple.getId()).orElseThrow();
+        List<HashMap<Object, Object>> resBody = new ArrayList<>();
+
+        for (HashMap<Integer, Integer> curCart : customer.getShoppingCart().subList(0, customer.getShoppingCart().size() - 1)) { // Get cart from 0 -> Last - 1 position (ignore the last)
+            HashMap<Object, Object> resCart = new HashMap<>();
+            ArrayList<HashMap<String, Object>> productList = new ArrayList<>();
+            resCart.put("customerId", customer.getId());
+            resCart.put("customerFirstName", customer.getFirstName());
+            resCart.put("customerLastName", customer.getLastName());
+            resCart.put("customerPhone", customer.getPhone());
+            resCart.put("customerEmail", customer.getEmail());
+            resCart.put("productList", productList);
+
+            for (Map.Entry<Integer, Integer> entry : curCart.entrySet()) {
+                int key = entry.getKey();
+                int value = entry.getValue();
+
+                if (key == -1) {
+                    resCart.put("cartPosition", value);
+                } else if (key == -2) {
+                    resCart.put("cartStatus", value);
+                } else if (key == -3) {
+                    resCart.put("cartPaymentTime", value);
+                } else if (key == -4) {
+                    resCart.put("cartTotalPrice", value);
+                }  else {
+                    Optional<Product> curOptionalProduct = productRepository.findById(key);
+
+                    if (curOptionalProduct.isPresent()) {
+                        Product curProduct = curOptionalProduct.get();
+
+                        HashMap<String, Object> resProduct = new HashMap<String, Object>();
+                        resProduct.put("id", curProduct.getId());
+                        resProduct.put("name", curProduct.getName());
+                        resProduct.put("price", curProduct.getPrice());
+                        resProduct.put("image", curProduct.getImages().get(0));
+                        resProduct.put("paymentQuantity", value);
+
+                        productList.add(resProduct);
+                    }
+                }
+            }
+
+            resBody.add(resCart);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(resBody);
     }
 }
