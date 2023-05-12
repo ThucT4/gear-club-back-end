@@ -31,6 +31,16 @@ public class CustomerController {
     @Autowired
     private CustomerService customerService;
 
+    @GetMapping(value = "/all")
+    public List<Customer> getAll() {
+        return customerService.findAll();
+    }
+
+    @PutMapping(value = "/search-by-string")
+    public List<Customer> searchByString(@RequestBody Map<String, String> searchRequest) {
+        return customerService.searchByString(searchRequest);
+    }
+
     @GetMapping(value = "/personal-information")
     public Customer getInformation(@AuthenticationPrincipal Customer customer) {
         return customerService.retrieve(customer.getId());

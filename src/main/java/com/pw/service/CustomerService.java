@@ -300,6 +300,37 @@ public class CustomerService extends CrudService<Customer> {
         return ResponseEntity.status(HttpStatus.OK).body(resBody);
     }
 
+    public List<Customer> searchByString(Map<String, String> searchRequest) {
+        String searchString = searchRequest.get("search");
+        List< Customer> customers = customerRepository.findAll();
+
+        // If search string is empty => Return all product
+        if (searchString.isEmpty()) {
+            return customers;
+        }
+
+        // Split string into words first
+        String[] words = searchString.toLowerCase().split("\\P{L}+");
+
+        // Filter
+        List<Customer> result = new ArrayList<>();
+        for (Customer customer : customers) {
+            for (String word : words) {
+                if (word.isEmpty()) {
+                    continue;
+                } else  {
+                    if (customer.getEmail().toLowerCase().contains(word) ||
+                    customer.getFirstName().toLowerCase().contains(word) ||
+                    customer.getLastName().toLowerCase().contains(word)) {
+                        result.add(customer);
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
     public ResponseEntity<HashMap<Object, Object>> getCurrentCart(Customer customerPrinciple) {
         Customer customer = customerRepository.findById(customerPrinciple.getId()).orElseThrow();
         HashMap<Object, Object> resCart = new HashMap<>();
