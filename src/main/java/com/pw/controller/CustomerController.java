@@ -86,6 +86,15 @@ public class CustomerController {
         return customerService.decreaseQuantityCart(customer.getId(), productForm.get("productId"));
     }
 
+    /**
+     * This path will be called after the customer has successfully checked out with stripe
+     * Then this path will make the real changes inside the database (decrease product quantity,...)
+     * Payment flow:
+     * - Call /cart/create-payment to create new payment intent
+     * - User checkout with Stripe => If success call this path, otherwise redirect home
+     * @param customer
+     * @return
+     */
     @PutMapping(value = "/cart/payment")
     public HttpResponse payment(@AuthenticationPrincipal Customer customer) {
         return customerService.payment(customer.getId());
