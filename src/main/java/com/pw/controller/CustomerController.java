@@ -35,30 +35,9 @@ public class CustomerController {
         return customerService.retrieve(customer.getId());
     }
 
-    @PostMapping(value = "/", consumes = "application/json")
-    public Customer create(@RequestBody Customer customer) {
-        return customerService.create(customer);
-    }
-
-    @GetMapping(value = "/{id}", produces = "application/json")
-    public Customer retrieve(@PathVariable int id) {
-        return customerService.retrieve(id);
-    }
-
-    @PutMapping(value = "/", consumes = "application/json")
-    public Customer update(@RequestBody Customer customer) {
-        return customerService.update(customer);
-    }
-
     @PutMapping(value = "/update-personal-information")
     public Customer updateCustomerInformation(@AuthenticationPrincipal Customer authenticatedCustomer, @RequestBody Customer customerFromClient) {
         return customerService.updateCustomerInformation(authenticatedCustomer.getId(), customerFromClient);
-    }
-
-    @DeleteMapping(value = "/{id}")
-    public String delete(@PathVariable int id) {
-        customerService.delete(id);
-        return "Done";
     }
 
     @PutMapping(value = "/cart/add-item", consumes = "application/json")
@@ -99,5 +78,29 @@ public class CustomerController {
                 .build();
         PaymentIntent paymentIntent = PaymentIntent.create(createParams);
         return paymentIntent.getClientSecret();
+    }
+
+
+
+    // TESTING API: DO NOT USE THOSE APIS
+    @PostMapping(value = "/", consumes = "application/json")
+    public Customer create(@RequestBody Customer customer) {
+        return customerService.create(customer);
+    }
+
+    @GetMapping(value = "/{id}", produces = "application/json")
+    public Customer retrieve(@PathVariable int id) {
+        return customerService.retrieve(id);
+    }
+
+    @PutMapping(value = "/", consumes = "application/json")
+    public Customer update(@RequestBody Customer customer) {
+        return customerService.update(customer);
+    }
+
+    @DeleteMapping(value = "/{id}")
+    public String delete(@PathVariable int id) {
+        customerService.delete(id);
+        return "Done";
     }
 }

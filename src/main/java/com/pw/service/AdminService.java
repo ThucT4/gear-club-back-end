@@ -2,8 +2,10 @@ package com.pw.service;
 
 import com.pw.model.Customer;
 import com.pw.model.Product;
+import com.pw.model.Role;
 import com.pw.repository.CustomerRepository;
 import com.pw.repository.ProductRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -164,5 +166,33 @@ public class AdminService {
         HashMap<String, String> body = new HashMap<>();
         body.put("message", "cart_declined");
         return ResponseEntity.status(HttpStatus.OK).body(body);
+    }
+
+    public List<Customer> getAllCustomer() {
+        List<Customer> customers = customerRepository.findAll();
+
+        List<Customer> customersNotAdmin = new ArrayList<>();
+
+        for (Customer customer : customers) {
+            if (customer.getRole() == Role.ADMIN) {
+                continue;
+            }
+
+            customersNotAdmin.add(customer);
+        }
+        return customersNotAdmin;
+    }
+
+    public Customer updateCustomer(Customer customer) {
+        Customer customerDB = customerRepository.findById(customer.getId()).orElseThrow(() -> {throw new EntityNotFoundException("User not found");});
+
+        customerDB.setFirstName(customer.getFirstName());
+        customerDB.setLastName(customer.getLastName());
+        customerDB.setPhone(customer.getPhone());
+        customerDB.setShippingAddress(customer.getShippingAddress());
+
+        customerRepository.save(customerDB);
+
+        return customerDB;
     }
 }

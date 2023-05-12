@@ -3,6 +3,7 @@ package com.pw.service;
 import com.pw.model.Customer;
 import com.pw.model.HttpResponse;
 import com.pw.model.Product;
+import com.pw.model.Role;
 import com.pw.repository.CustomerRepository;
 import com.pw.repository.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
