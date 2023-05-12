@@ -43,6 +43,8 @@ public class SecurityConfiguration {
             "/api/collection/", // PUT
             "/api/admin/all-customers", // GET
             "/api/admin/update-customer", // PUT
+            "/api/customer/all", // GET
+            "/api/customer/search-by-string", // PUT
     };
 
     @Autowired
@@ -99,8 +101,11 @@ public class SecurityConfiguration {
                 .hasAuthority("ADMIN")
                 .requestMatchers(HttpMethod.GET, "/api/admin/all-customers")
                 .hasAuthority("ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/api/admin/update-customer")
+                .requestMatchers(HttpMethod.GET, "/api/customer/all")
                 .hasAuthority("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/customer/search-by-string")
+                .hasAuthority("ADMIN")
+
 
 
 
