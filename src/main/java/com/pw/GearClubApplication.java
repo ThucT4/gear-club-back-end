@@ -11,6 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import com.pw.model.Customer;
+import com.pw.model.Role;
+import com.pw.repository.CustomerRepository;
 import org.jsoup.*;
 import org.jsoup.nodes.*;
 import org.jsoup.select.*;
@@ -33,6 +36,7 @@ import com.pw.repository.CollectionRepository;
 import com.pw.repository.ProductRepository;
 
 import com.pw.fetchdata;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootApplication
 public class GearClubApplication implements CommandLineRunner {
@@ -44,19 +48,25 @@ public class GearClubApplication implements CommandLineRunner {
 	@Autowired
 	private CollectionRepository collectionRepository;
 
+	@Autowired
+	private CustomerRepository customerRepository;
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+
 	public static void main(String[] args) throws IOException {
 		SpringApplication.run(GearClubApplication.class, args);
 	}
 
 	@Override
-  	public void run(String... args) {
+	public void run(String... args) {
 		log.info("StartApplication...");
-		
+
 		// Run the following 2 lines ONCE to initialize the table data
-		file2Db("products.csv");
-		initCollection();
-		
-//		log.info("Successfully initialize table Products");
+//		file2Db("products.csv");
+//		initCollection();
+//		initCustomer();
+//		log.info("Successfully initialize data");
 	}
 
 	public void file2Db (String fileName) {
@@ -68,122 +78,93 @@ public class GearClubApplication implements CommandLineRunner {
 			CSVReader reader = new CSVReader(input);
 
 			String[] row;
-			// 
+			//
 
-			String name = "", vendorName = "", price = "", warranty = ""
-			, intro = "", designLoc = "", titleDescrip = "", description = "", cate = "";
+			String name = "", vendorName = "", price = "", warranty = "", intro = "", designLoc = "", titleDescrip = "", description = "", cate = "";
 			Integer quantity = 0;
 			ArrayList<String> images = new ArrayList<>();
 			HashMap<String, String> feature = new HashMap<>();
 			HashMap<String, String> highlights = new HashMap<>();
 
-			
+
 			while ( (row = reader.readNext()) != null) {
 				for (int i = 0; i < row.length; i++) {
 					String cell = row[i];
 
 					if (i == 0) {
 						name = cell;
-					}
-
-					else if (i == 1) {
+					} else if (i == 1) {
 						vendorName = cell;
-					}
-
-					else if (i == 2) {
+					} else if (i == 2) {
 						price = cell;
-					}
-
-					else if (i == 3) {
+					} else if (i == 3) {
 						designLoc = cell;
-					}
-					
-					else if (i == 4) {
+					} else if (i == 4) {
 						warranty = cell;
 
 						if (warranty.isEmpty()) {
 							warranty = String.valueOf(ThreadLocalRandom.current().nextInt(1, 24));
 						}
-					}
-
-					else if (i == 5) {
+					} else if (i == 5) {
 						String listString = cell.substring(1, cell.length() - 1);
 
 						images = new ArrayList<String>(Arrays.asList(listString.split(",")));
-					}
-					
-					else if (i == 6) {
+					} else if (i == 6) {
 						intro = cell;
-					}
-
-					else if (i == 7) {
+					} else if (i == 7) {
 						titleDescrip = cell;
-					}
-
-					else if (i == 8) {
+					} else if (i == 8) {
 						description = cell;
-					}
-
-					else if (i == 9) {
+					} else if (i == 9) {
 						//remove curly brackets
-						String value = cell.substring(1, cell.length()-1); 
-						      
+						String value = cell.substring(1, cell.length()-1);
+
 						//split the string to creat key-value pairs
-						String[] keyValuePairs = value.split(",");  
-						
-						
-						feature = new HashMap<String,String> ();               
+						String[] keyValuePairs = value.split(",");
+
+
+						feature = new HashMap<String,String> ();
 
 						//iterate over the pairs
 						for(String pair : keyValuePairs) {
-							//split the pairs to get key and value 
-							String[] entry = pair.split("=");   
-							
+							//split the pairs to get key and value
+							String[] entry = pair.split("=");
+
 							if (entry.length < 2) {
 								System.out.println(pair);
-							}
-
-							else {
+							} else {
 								//add them to the hashmap and trim whitespaces
-								feature.put(entry[0].trim(), entry[1].trim());  
-							}        
+								feature.put(entry[0].trim(), entry[1].trim());
+							}
 						}
-					}
-
-					else if (i == 10) {
+					} else if (i == 10) {
 						//remove curly brackets
-						String value = cell.substring(1, cell.length()-1); 
-						      
+						String value = cell.substring(1, cell.length()-1);
+
 						//split the string to creat key-value pairs
-						String[] keyValuePairs = value.split(",");  
-						
-						
-						highlights = new HashMap<String,String> ();               
+						String[] keyValuePairs = value.split(",");
+
+
+						highlights = new HashMap<String,String> ();
 
 						//iterate over the pairs
 						for(String pair : keyValuePairs) {
-							//split the pairs to get key and value 
-							String[] entry = pair.split("=");   
-							
+							//split the pairs to get key and value
+							String[] entry = pair.split("=");
+
 							if (entry.length < 2) {
 								System.out.println(pair);
-							}
-
-							else {
+							} else {
 								//add them to the hashmap and trim whitespaces
-								highlights.put(entry[0].trim(), entry[1].trim());  
-							}        
+								highlights.put(entry[0].trim(), entry[1].trim());
+							}
 						}
-					}
-
-					else if (i == 11) {
+					} else if (i == 11) {
 						cate = cell;
-					}
-
-					else if (i == 12) {
+					} else if (i == 12) {
 						quantity = Integer.parseInt(cell);
 					}
-            	}
+				}
 
 				Product product = new Product();
 
@@ -207,15 +188,13 @@ public class GearClubApplication implements CommandLineRunner {
 
 				try {
 					productRepository.save(product);
-				}
-				catch (IllegalStateException e) {
+				} catch (IllegalStateException e) {
 					e.printStackTrace();
-					log.info(e.toString());								
+					log.info(e.toString());
 				}
 			}
 			reader.close();
-		}
-		catch (IOException event) {
+		} catch (IOException event) {
 			// event.printStackTrace();
 			// log.info(event.toString());
 		}
@@ -240,31 +219,27 @@ public class GearClubApplication implements CommandLineRunner {
 
 					if (i == 0) {
 						name = cell;
-					}
-
-					else {
+					} else {
 						//remove curly brackets
-						String value = cell.substring(1, cell.length()-1); 
-								
+						String value = cell.substring(1, cell.length()-1);
+
 						//split the string to creat key-value pairs
-						String[] keyValuePairs = value.split(",");  
-						
-						
-						productList = new HashMap<Integer,String> ();               
+						String[] keyValuePairs = value.split(",");
+
+
+						productList = new HashMap<Integer,String> ();
 
 						//iterate over the pairs
 						for(String pair : keyValuePairs) {
-							//split the pairs to get key and value 
-							String[] entry = pair.split("=");   
-							
+							//split the pairs to get key and value
+							String[] entry = pair.split("=");
+
 							if (entry.length < 2) {
 								System.out.println(pair);
-							}
-
-							else {
+							} else {
 								//add them to the hashmap and trim whitespaces
-								productList.put(Integer.parseInt(entry[0].trim()), entry[1].trim());  
-							}        
+								productList.put(Integer.parseInt(entry[0].trim()), entry[1].trim());
+							}
 						}
 					}
 				}
@@ -276,10 +251,53 @@ public class GearClubApplication implements CommandLineRunner {
 
 				collectionRepository.save(collection);
 			}
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-}
+
+	}
+
+	public void initCustomer() {
+		// Create regular user
+		ArrayList<HashMap<Integer, Integer>> listOfShoppingCart = new ArrayList<>();
+		HashMap<Integer, Integer> firstShoppingCart = new HashMap<>();
+		firstShoppingCart.put(-1, 0); // Index of first cart in cart list
+		firstShoppingCart.put(-2, 1); // Status of first cart
+		listOfShoppingCart.add(firstShoppingCart);
+
+		Customer regularUser = Customer.builder()
+				.email("regular_customer@gearclub.com")
+				.firstName("Thinh")
+				.lastName("Ngo")
+				.password(passwordEncoder.encode("Regularcustomer123@"))
+				.phone("0382210397")
+				.role(Role.USER)
+				.shippingAddress("1116 Huynh Tan Phat, District 7, Ho Chi Minh city")
+				.shoppingCart(listOfShoppingCart)
+				.build();
+
+		customerRepository.save(regularUser);
+
+
+
+		// Create admin user
+		ArrayList<HashMap<Integer, Integer>> listOfShoppingCart2 = new ArrayList<>();
+		HashMap<Integer, Integer> firstShoppingCart2 = new HashMap<>();
+		firstShoppingCart2.put(-1, 0); // Index of first cart in cart list
+		firstShoppingCart2.put(-2, 1); // Status of first cart
+		listOfShoppingCart2.add(firstShoppingCart2);
+
+		Customer adminUser = Customer.builder()
+				.email("admin@gearclub.com")
+				.firstName("Admin")
+				.lastName("Admin")
+				.password(passwordEncoder.encode("Admin123@"))
+				.phone("")
+				.role(Role.ADMIN)
+				.shippingAddress("")
+				.shoppingCart(listOfShoppingCart2)
+				.build();
+
+		customerRepository.save(adminUser);
+	}
 }
