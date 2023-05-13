@@ -60,13 +60,11 @@ public class GearClubApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) {
+		// Run the following 5 lines ONCE to initialize the table data
 //		log.info("Initialize database...");
-
-		// Run the following 2 lines ONCE to initialize the table data
 //		file2Db("products.csv");
 //		initCollection();
 //		initCustomer();
-
 //		log.info("Successfully initialize database...");
 	}
 
