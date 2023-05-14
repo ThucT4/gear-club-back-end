@@ -310,7 +310,10 @@ public class CustomerService extends CrudService<Customer> {
         }
 
         // Split string into words first
-        String[] words = searchString.toLowerCase().split("\\P{L}+");
+        String[] words = searchString.toLowerCase().split(" ");
+        for (int i = 0; i < words.length; i++) {
+            words[i] = words[i].trim();
+        }
 
         // Filter
         List<Customer> result = new ArrayList<>();
@@ -321,7 +324,8 @@ public class CustomerService extends CrudService<Customer> {
                 } else  {
                     if (customer.getEmail().toLowerCase().contains(word) ||
                     customer.getFirstName().toLowerCase().contains(word) ||
-                    customer.getLastName().toLowerCase().contains(word)) {
+                    customer.getLastName().toLowerCase().contains(word) ||
+                    customer.getId().toString().toLowerCase().contains(word)) {
                         result.add(customer);
                     }
                 }
@@ -335,15 +339,18 @@ public class CustomerService extends CrudService<Customer> {
         Customer customer = customerRepository.findById(customerPrinciple.getId()).orElseThrow();
         HashMap<Object, Object> resCart = new HashMap<>();
 
-        HashMap<Integer, Integer> curCart = customer.getShoppingCart().get(customer.getShoppingCart().size() - 1);
+        HashMap<Integer, Integer> curCart = customer.getShoppingCart().get(customer.getShoppingCart().size() - 1); // Last cart
         ArrayList<HashMap<String, Object>> productList = new ArrayList<>();
         resCart.put("customerId", customer.getId());
         resCart.put("customerFirstName", customer.getFirstName());
         resCart.put("customerLastName", customer.getLastName());
         resCart.put("customerPhone", customer.getPhone());
         resCart.put("customerEmail", customer.getEmail());
+        resCart.put("customerAddress", customer.getShippingAddress());
         resCart.put("productList", productList);
 
+        // Loop through each product of cart
+        ArrayList<Integer> deletedProductIds = new ArrayList<>();
         for (Map.Entry<Integer, Integer> entry : curCart.entrySet()) {
             int key = entry.getKey();
             int value = entry.getValue();
@@ -362,6 +369,12 @@ public class CustomerService extends CrudService<Customer> {
                 if (curOptionalProduct.isPresent()) {
                     Product curProduct = curOptionalProduct.get();
 
+                    // If product has been soft deleted => Add it to the deleted id list
+                    if (curProduct.getDeleted()) {
+                        deletedProductIds.add(curProduct.getId());
+                        continue;
+                    }
+
                     HashMap<String, Object> resProduct = new HashMap<String, Object>();
                     resProduct.put("id", curProduct.getId());
                     resProduct.put("name", curProduct.getName());
@@ -373,6 +386,24 @@ public class CustomerService extends CrudService<Customer> {
                     productList.add(resProduct);
                 }
             }
+        }
+
+        // Remove all the product in the deleted id list from the last cart of customer
+        if (deletedProductIds.size() >= 1) {
+            // Current cart list clone
+            ArrayList<HashMap<Integer, Integer>> cartList = (ArrayList<HashMap<Integer, Integer>>) customer.getShoppingCart().clone();
+
+            // Get last cart
+            HashMap<Integer, Integer> lastCart = cartList.get(cartList.size() - 1);
+
+            // Remove deleted product ids from last cart
+            for (Integer productId : deletedProductIds) {
+                lastCart.remove(productId);
+            }
+
+            // Save change to database
+            customer.setShoppingCart(cartList);
+            customerRepository.save(customer);
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(resCart);
