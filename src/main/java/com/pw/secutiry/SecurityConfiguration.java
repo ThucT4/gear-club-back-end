@@ -29,8 +29,10 @@ public class SecurityConfiguration {
             "/api/product/all", // GET
             "/api/product/filter/{query}", // GET,
 
-            "api/collection/all", // GET
-            "api/collection/{name}", // GET
+            "/api/collection/all", // GET
+            "/api/collection/{name}", // GET
+
+            "/api/subscriber/{email}", // POST
     };
 
     private final String[] ADMIN_ENDPOINTS = {
@@ -45,6 +47,9 @@ public class SecurityConfiguration {
             "/api/admin/update-customer", // PUT
             "/api/customer/all", // GET
             "/api/customer/search-by-string", // PUT
+
+            "/api/subscriber/all", // GET
+            "/api/subscriber/delete/{id}}", // DELETE
     };
 
     @Autowired
@@ -82,6 +87,9 @@ public class SecurityConfiguration {
                 .permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/collection/{name}")
                 .permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/subscriber/{email}")
+                .permitAll()
+
 
 
                 // After authentication, any admin API requires authenticated user to have an admin role
@@ -104,6 +112,10 @@ public class SecurityConfiguration {
                 .requestMatchers(HttpMethod.GET, "/api/customer/all")
                 .hasAuthority("ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/customer/search-by-string")
+                .hasAuthority("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/subscriber/all")
+                .hasAuthority("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/subscriber/delete/{id}")
                 .hasAuthority("ADMIN")
 
 

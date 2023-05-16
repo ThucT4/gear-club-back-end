@@ -1,17 +1,18 @@
 package com.pw.service;
 
+import com.pw.mailsender.EmailService;
 import com.pw.model.Customer;
 import com.pw.model.Product;
 import com.pw.model.Role;
+import com.pw.model.Subscriber;
 import com.pw.repository.CustomerRepository;
 import com.pw.repository.ProductRepository;
+import com.pw.repository.SubscriberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.*;
 
@@ -23,6 +24,12 @@ public class AdminService {
 
     @Autowired
     ProductRepository productRepository;
+
+    @Autowired
+    SubscriberRepository subscriberRepository;
+
+    @Autowired
+    EmailService emailService;
 
     @Autowired
     private ProductService productCrudService;
@@ -194,5 +201,38 @@ public class AdminService {
         customerRepository.save(customerDB);
 
         return customerDB;
+    }
+
+    public ResponseEntity<HashMap<Object, Object>> sendEmailToAllSubscribers(String subject, String content) {
+        try {
+            List<Subscriber> subscribers = subscriberRepository.findAll();
+
+            for (Subscriber subscriber : subscribers) {
+                emailService.sendSimpleMessage(subscriber.getEmail(), subject, content);
+            }
+
+            HashMap<Object, Object> body = new HashMap<>();
+            body.put("status", "mail_send_ok");
+            return ResponseEntity.status(HttpStatus.OK).body(body);
+        } catch (Exception e) {
+            HashMap<Object, Object> body = new HashMap<>();
+            body.put("status", "mail_send_failed");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
+        }
+    }
+
+    public ResponseEntity<HashMap<Object, Object>> sendEmailToOneSubscriber(Integer subscriberId, String subject, String content) {
+        try {
+            Subscriber subscriber = subscriberRepository.findById(subscriberId).orElseThrow();
+            emailService.sendSimpleMessage(subscriber.getEmail(), subject, content);
+
+            HashMap<Object, Object> body = new HashMap<>();
+            body.put("status", "mail_send_ok");
+            return ResponseEntity.status(HttpStatus.OK).body(body);
+        } catch (Exception e) {
+            HashMap<Object, Object> body = new HashMap<>();
+            body.put("status", "mail_send_failed");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
+        }
     }
 }

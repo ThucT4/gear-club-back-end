@@ -47,4 +47,18 @@ public class AdminController {
     public Customer updateCustomer(@RequestBody Customer customer) {
         return adminService.updateCustomer(customer);
     }
+
+    @PostMapping(value = "/send-email-to-all-subscribers")
+    public ResponseEntity<HashMap<Object, Object>> sendEmailToAllSubscribers(@RequestBody HashMap<Object, Object> body) {
+        String subject = (String) body.get("subject");
+        String content = (String) body.get("content");
+        return adminService.sendEmailToAllSubscribers(subject, content);
+    }
+
+    @PostMapping(value = "/send-email-to-one-subscriber/{id}")
+    public ResponseEntity<HashMap<Object, Object>> sendEmailToOneSubscriber(@PathVariable(name = "id") Integer subscriberId, @RequestBody HashMap<Object, Object> body) {
+        String subject = (String) body.get("subject");
+        String content = (String) body.get("content");
+        return adminService.sendEmailToOneSubscriber(subscriberId, subject, content);
+    }
 }
