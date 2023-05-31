@@ -1,4 +1,4 @@
-# Gear club front-end source code
+# Gear club back-end source code
 
 Front-end github: https://github.com/ngongocthinh159/gear-club-front-end
 
