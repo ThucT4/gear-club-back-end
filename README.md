@@ -1,5 +1,7 @@
 # Gear club back-end source code
 
+Live demo: https://gearclub.netlify.app/
+
 Front-end github: https://github.com/ngongocthinh159/gear-club-front-end
 
 Back-end github: https://github.com/ThucT4/gear-club-back-end
