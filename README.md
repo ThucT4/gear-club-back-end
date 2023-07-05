@@ -7,7 +7,7 @@ Front-end github: https://github.com/ngongocthinh159/gear-club-front-end
 Back-end github: https://github.com/ThucT4/gear-club-back-end
 
 
-Documentation: [EEET2580-GroupASM_Report.pdf](https://rmiteduau-my.sharepoint.com/:b:/g/personal/s3870730_rmit_edu_vn/EW97I9ST0NNEhjUiCrxxFUQBOtSEpHJszDvOO0JYiBy3uA?e=Xkvhmo)
+Documentation: [EEET2580-GroupASM_Report.pdf](https://drive.google.com/file/d/1Jjpq8JrcWotBEAGfxDQ2PrGS_lrIGGIj/view?usp=sharing)
 
 
 Usage: please read the documentation above
